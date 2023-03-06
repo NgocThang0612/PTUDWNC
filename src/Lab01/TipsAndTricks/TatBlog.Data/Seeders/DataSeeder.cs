@@ -87,7 +87,16 @@ public class DataSeeder : IDataSeeder
             }
         };
 
+<<<<<<< HEAD
+        foreach (var author in authors)
+        {
+            if (!_dbContext.Authors.Any(a => a.UrlSlug == author.UrlSlug))
+                _dbContext.Authors.Add(author);
+        }
+        //_dbContext.Authors.AddRange(authors);
+=======
         _dbContext.Authors.AddRange(authors);
+>>>>>>> 7a7d2f5b13f36e4806eafcffa42cebccd3f57c45
         _dbContext.SaveChanges();
      
         return authors;
@@ -108,8 +117,17 @@ public class DataSeeder : IDataSeeder
             new() {Name = "C++", Description = "C++", UrlSlug = "c++", ShowOnMenu = true},
             new() {Name = "Python", Description = "Python", UrlSlug = "python", ShowOnMenu = true},
         };
+<<<<<<< HEAD
+        foreach (var category in categories)
+        {
+            if (!_dbContext.Categories.Any(a => a.UrlSlug == category.UrlSlug))
+                _dbContext.Categories.Add(category);
+        }
+        //_dbContext.AddRange(categories);
+=======
 
         _dbContext.AddRange(categories);
+>>>>>>> 7a7d2f5b13f36e4806eafcffa42cebccd3f57c45
         _dbContext.SaveChanges();
 
         return categories;
@@ -141,8 +159,17 @@ public class DataSeeder : IDataSeeder
             new() {Name = "Data Science", Description = "Data Science", UrlSlug = "data-science"},
 
         };
+<<<<<<< HEAD
+        foreach (var tag in tags)
+        {
+            if (!_dbContext.Tags.Any(a => a.UrlSlug == tag.UrlSlug))
+                _dbContext.Tags.Add(tag);
+        }
+        //_dbContext.AddRange(tags);
+=======
 
         _dbContext.AddRange(tags);
+>>>>>>> 7a7d2f5b13f36e4806eafcffa42cebccd3f57c45
         _dbContext.SaveChanges();
 
         return tags;
@@ -264,8 +291,17 @@ public class DataSeeder : IDataSeeder
                 }
             },
         };
+<<<<<<< HEAD
+        foreach (var post in posts)
+        {
+            if (!_dbContext.Posts.Any(a => a.UrlSlug == post.UrlSlug))
+                _dbContext.Posts.Add(post);
+        }
+        //_dbContext.AddRange(posts);
+=======
 
         _dbContext.AddRange(posts);
+>>>>>>> 7a7d2f5b13f36e4806eafcffa42cebccd3f57c45
         _dbContext.SaveChanges();
         return posts;
     }
