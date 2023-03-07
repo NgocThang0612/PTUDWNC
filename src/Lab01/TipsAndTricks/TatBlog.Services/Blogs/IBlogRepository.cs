@@ -1,30 +1,19 @@
-<<<<<<< HEAD
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 using System;
-=======
-﻿using System;
->>>>>>> 7a7d2f5b13f36e4806eafcffa42cebccd3f57c45
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-<<<<<<< HEAD
 using TatBlog.Core.Constants;
 using TatBlog.Core.Contracts;
 using TatBlog.Core.DTO;
 using TatBlog.Core.Entities;
 using static Azure.Core.HttpHeader;
-=======
-using TatBlog.Core.Contracts;
-using TatBlog.Core.DTO;
-using TatBlog.Core.Entities;
->>>>>>> 7a7d2f5b13f36e4806eafcffa42cebccd3f57c45
 
 namespace TatBlog.Services.Blogs;
 
 public interface IBlogRepository
 {
-<<<<<<< HEAD
     #region
     // B. Phần hướng dẫn
     // Tìm bài viết có tên định danh là "slug"
@@ -201,43 +190,5 @@ public interface IBlogRepository
 
 
     #endregion
-=======
-    // Tìm bài viết có tên định danh là "slug"
-    // và được đăng vào tháng 'month' năm 'year'
-    Task<Post> GetPostAsync(
-        int year,
-        int month,
-        string slug,
-        CancellationToken cancellationToken = default);
-    // CancellationToken cho phép hủy liên kết giữa các luồng, các Task object
-
-    // Tìm top N bài viết phổ biến được nhiều người xem nhất
-    Task<IList<Post>> GetPopularArticlesAsync(
-        int numPosts,
-        CancellationToken cancellationToken= default);
-
-    // Kiểm tra xem tên định danh của bài viết đã có hay chưa
-    Task<bool> IsPostSlugExistedAsync(
-        int postId, string slug,
-        CancellationToken cancellationToken = default);
-
-    // Lấy danh sách chuyên mục và số lượng bài viết
-    // nằm thuộc từng chuyên mục/chủ đề
-    Task<IList<CategoryItem>> GetCategoriesAsync(
-        bool showOnMenu = false,
-        CancellationToken cancellationToken = default);
-
-    // Tăng số lượt xem của một bài viết
-    Task IncreaseViewCountAsync(
-        int postId,
-        CancellationToken cancellationToken = default);
-
-    // Lấy danh sách từ khóa/thẻ và phân trang theo
-    // các tham số pagingParams
-    Task<IPagedList<TagItem>> GetPagedTagsAsync(
-        IPagingParams pagingParams,
-        CancellationToken cancellationToken = default);
-    
->>>>>>> 7a7d2f5b13f36e4806eafcffa42cebccd3f57c45
 }
 

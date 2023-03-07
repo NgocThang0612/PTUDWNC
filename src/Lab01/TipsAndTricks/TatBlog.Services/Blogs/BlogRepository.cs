@@ -11,12 +11,9 @@ using TatBlog.Data.Contexts;
 using TatBlog.Core.DTO;
 using TatBlog.Core.Contracts;
 using TatBlog.Services.Extensions;
-<<<<<<< HEAD
 using TatBlog.Core.Constants;
 using System.Threading;
 using System.Security.Cryptography.X509Certificates;
-=======
->>>>>>> 7a7d2f5b13f36e4806eafcffa42cebccd3f57c45
 
 namespace TatBlog.Services.Blogs;
 
@@ -28,7 +25,6 @@ public class BlogRepository : IBlogRepository
     {
         _context = context;
     }
-<<<<<<< HEAD
 
     #region
     //// Tìm bài viết có tên định danh là 'slug'
@@ -75,52 +71,6 @@ public class BlogRepository : IBlogRepository
     //        .Take(numPosts)
     //        .ToListAsync(cancellationToken);
     //}
-=======
-    // Tìm bài viết có tên định danh là 'slug'
-    // và được đăng vào tháng 'month' năm 'year'
-    public async Task<Post> GetPostAsync(
-        int year,
-        int month,
-        string slug,
-        CancellationToken cancellationToken = default)
-    {
-        IQueryable<Post> postsQuery = _context.Set<Post>()
-        .Include(x => x.Category)
-        .Include(x => x.Author);
-
-        if (year > 0)
-        {
-            postsQuery = postsQuery.Where(x => x.PostedDate.Year == year);
-
-        }
-
-        if (month > 0)
-        {
-            postsQuery = postsQuery.Where(x => x.PostedDate.Month == month);
-
-        }
-
-        if (!string.IsNullOrWhiteSpace(slug))
-        {
-            postsQuery = postsQuery.Where(x => x.UrlSlug == slug);
-        }
-
-        return await postsQuery.FirstOrDefaultAsync(cancellationToken);
-
-    }
-
-    // Tìm top N bài viết phổ biến được nhiều người xem nhất
-    public async Task<IList<Post>> GetPopularArticlesAsync(
-        int numPosts, CancellationToken cancellationToken = default)
-    {
-        return await _context.Set<Post>()
-            .Include(x => x.Author)
-            .Include(x => x.Category)
-            .OrderByDescending(p => p.ViewCount)
-            .Take(numPosts)
-            .ToListAsync(cancellationToken);
-    }
->>>>>>> 7a7d2f5b13f36e4806eafcffa42cebccd3f57c45
 
     // Kiểm tra xem tên định danh của bài viết đã có hay chưa
     public async Task<bool> IsPostSlugExistedAsync(
@@ -133,7 +83,6 @@ public class BlogRepository : IBlogRepository
             cancellationToken);
     }
 
-<<<<<<< HEAD
     //// Lấy danh sách chuyên mục và số lượng bài viết
     //// nằm thuộc từng chuyên mục/chủ đề
     //public async Task<IList<CategoryItem>> GetCategoriesAsync(
@@ -211,39 +160,16 @@ public class BlogRepository : IBlogRepository
         return await tags
             .OrderBy(x => x.Id)
             .Select(x => new TagItem()
-=======
-    // Lấy danh sách chuyên mục và số lượng bài viết
-    // nằm thuộc từng chuyên mục/chủ đề
-    public async Task<IList<CategoryItem>> GetCategoriesAsync(
-        bool showOnMenu = false,
-        CancellationToken cancellationToken = default)
-    {
-        IQueryable<Category> categories = _context.Set<Category>();
-
-        if (showOnMenu)
-        {
-            categories = categories.Where(x => x.ShowOnMenu);
-        }
-
-        return await categories
-            .OrderBy(x => x.Name)
-            .Select(x => new CategoryItem()
->>>>>>> 7a7d2f5b13f36e4806eafcffa42cebccd3f57c45
             {
                 Id = x.Id,
                 Name = x.Name,
                 UrlSlug = x.UrlSlug,
                 Description = x.Description,
-<<<<<<< HEAD
-=======
-                ShowOnMenu = x.ShowOnMenu,
->>>>>>> 7a7d2f5b13f36e4806eafcffa42cebccd3f57c45
                 PostCount = x.Posts.Count(p => p.Published)
             })
             .ToListAsync(cancellationToken);
     }
 
-<<<<<<< HEAD
     //Câu 1.D : Xóa một thẻ theo mã cho trước
     public async Task DeleteTagByIdAsync(int TagId, CancellationToken cancellationtoken = default)
     {
@@ -323,34 +249,11 @@ public class BlogRepository : IBlogRepository
     {
         var categoryQuery = _context.Set<Category>()
             .Select(x => new CategoryItem()
-=======
-    // Tăng số lượt xem của một bài viết
-    public async Task IncreaseViewCountAsync(
-        int postId,
-        CancellationToken cancellationToken = default)
-    {
-        await _context.Set<Post>()
-            .Where(x => x.Id == postId)
-            .ExecuteUpdateAsync(p =>
-            p.SetProperty(x => x.ViewCount, x => x.ViewCount + 1),
-            cancellationToken);
-    }
-
-    // Lấy danh sách từ khóa/thẻ và phân trang theo
-    // các tham số pagingParams
-    public async Task<IPagedList<TagItem>> GetPagedTagsAsync(
-        IPagingParams pagingParams,
-        CancellationToken cancellationToken = default)
-    {
-        var tagQuery = _context.Set<Tag>()
-            .Select(x => new TagItem()
->>>>>>> 7a7d2f5b13f36e4806eafcffa42cebccd3f57c45
             {
                 Id = x.Id,
                 Name = x.Name,
                 UrlSlug = x.UrlSlug,
                 Description = x.Description,
-<<<<<<< HEAD
                 PostCount = x.Posts.Count(p => p.Published),
                 ShowOnMenu = x.ShowOnMenu,
             });
@@ -582,13 +485,4 @@ public class BlogRepository : IBlogRepository
     //SearchSubscribersAsync(pagingParams, keyword, unsubscribed,
     //involuntary). 
     #endregion
-=======
-                PostCount = x.Posts.Count(p => p.Published)
-            });
-        return await tagQuery
-            .ToPagedListAsync(pagingParams, cancellationToken);
-    }
-
-    
->>>>>>> 7a7d2f5b13f36e4806eafcffa42cebccd3f57c45
 }
