@@ -85,30 +85,30 @@ public class BlogRepository : IBlogRepository
 
     //// Lấy danh sách chuyên mục và số lượng bài viết
     //// nằm thuộc từng chuyên mục/chủ đề
-    //public async Task<IList<CategoryItem>> GetCategoriesAsync(
-    //    bool showOnMenu = false,
-    //    CancellationToken cancellationToken = default)
-    //{
-    //    IQueryable<Category> categories = _context.Set<Category>();
+    public async Task<IList<CategoryItem>> GetCategoriesAsync(
+        bool showOnMenu = false,
+        CancellationToken cancellationToken = default)
+    {
+        IQueryable<Category> categories = _context.Set<Category>();
 
-    //    if (showOnMenu)
-    //    {
-    //        categories = categories.Where(x => x.ShowOnMenu);
-    //    }
+        if (showOnMenu)
+        {
+            categories = categories.Where(x => x.ShowOnMenu);
+        }
 
-    //    return await categories
-    //        .OrderBy(x => x.Name)
-    //        .Select(x => new CategoryItem()
-    //        {
-    //            Id = x.Id,
-    //            Name = x.Name,
-    //            UrlSlug = x.UrlSlug,
-    //            Description = x.Description,
-    //            ShowOnMenu = x.ShowOnMenu,
-    //            PostCount = x.Posts.Count(p => p.Published)
-    //        })
-    //        .ToListAsync(cancellationToken);
-    //}
+        return await categories
+            .OrderBy(x => x.Name)
+            .Select(x => new CategoryItem()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                UrlSlug = x.UrlSlug,
+                Description = x.Description,
+                ShowOnMenu = x.ShowOnMenu,
+                PostCount = x.Posts.Count(p => p.Published)
+            })
+            .ToListAsync(cancellationToken);
+    }
 
     //// Tăng số lượt xem của một bài viết
     //public async Task IncreaseViewCountAsync(
@@ -333,17 +333,7 @@ public class BlogRepository : IBlogRepository
     //PostQuery(kết quả trả về kiểu IList<Post>)
     public async Task<IList<Post>> GetAllPostByPostQuery(PostQuery postquery, CancellationToken cancellationToken = default)
     {
-        return await _context.Set<Post>()
-            .Include(c => c.Category)
-            .Include(c => c.Tags)
-            .WhereIf(postquery.AuthorId > 0, p => p.AuthorId == postquery.AuthorId)
-            .WhereIf(postquery.PostId > 0, p => p.Id == postquery.PostId)
-            .WhereIf(postquery.CategoryId > 0, p => p.CategoryId == postquery.CategoryId)
-            .WhereIf(!string.IsNullOrWhiteSpace(postquery.CategorySlug), p => p.Category.UrlSlug == postquery.CategorySlug)
-            .WhereIf(postquery.PostedYear > 0, p => p.PostedDate.Year == postquery.PostedYear)
-            .WhereIf(postquery.PostedMonth > 0, p => p.PostedDate.Month == postquery.PostedMonth)
-            .WhereIf(postquery.TagId > 0, p => p.Tags.Any(x => x.Id == postquery.TagId))
-            .WhereIf(!string.IsNullOrWhiteSpace(postquery.TagSlug), p => p.Tags.Any(x => x.UrlSlug == postquery.TagSlug))
+        return await FilterPost(postquery)
             .ToListAsync(cancellationToken);
     }
 
@@ -351,27 +341,46 @@ public class BlogRepository : IBlogRepository
     //tượng PostQuery.
     public async Task<int> CountPostByPostQuery(PostQuery postquery, CancellationToken cancellationToken = default)
     {
-        return await _context.Set<Post>()
-            .Include(c => c.Category)
-            .Include(c => c.Tags)
-            .WhereIf(postquery.AuthorId > 0, p => p.AuthorId == postquery.AuthorId)
-            .WhereIf(postquery.PostId > 0, p => p.Id == postquery.PostId)
-            .WhereIf(postquery.CategoryId > 0, p => p.CategoryId == postquery.CategoryId)
-            .WhereIf(!string.IsNullOrWhiteSpace(postquery.CategorySlug), p => p.Category.UrlSlug == postquery.CategorySlug)
-            .WhereIf(postquery.PostedYear > 0, p => p.PostedDate.Year == postquery.PostedYear)
-            .WhereIf(postquery.PostedMonth > 0, p => p.PostedDate.Month == postquery.PostedMonth)
-            .WhereIf(postquery.TagId > 0, p => p.Tags.Any(x => x.Id == postquery.TagId))
-            .WhereIf(!string.IsNullOrWhiteSpace(postquery.TagSlug), p => p.Tags.Any(x => x.UrlSlug == postquery.TagSlug))
+        return await FilterPost(postquery)
             .CountAsync(cancellationToken);
     }
 
     //Câu 1 . S : Tìm và phân trang các bài viết thỏa mãn điều kiện tìm kiếm được cho trong
     //đối tượng PostQuery(kết quả trả về kiểu IPagedList<Post>)
-    public Task<IPagedList<Post>> GetPagedPostByPostQueryAsync(IPagingParams pagingParams, CancellationToken cancellationToken = default)
+    public async Task<IPagedList<Post>> GetPagedPostsAsync(PostQuery pq, IPagingParams pagingParams,  CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await FilterPost(pq)
+                .ToPagedListAsync(pagingParams, cancellationToken);
     }
-
+    public IQueryable<Post> FilterPost(PostQuery pq)
+    {
+        return _context.Set<Post>()
+            .Include(c => c.Category)
+            .Include(t => t.Tags)
+            .Include(a => a.Author)
+            .WhereIf(pq.AuthorId > 0, p => p.AuthorId == pq.AuthorId)
+            .WhereIf(!string.IsNullOrWhiteSpace(pq.AuthorSlug), p => p.UrlSlug == pq.AuthorSlug)
+            .WhereIf(pq.PostId > 0, p => p.Id == pq.PostId)
+            .WhereIf(pq.CategoryId > 0, p => p.CategoryId == pq.CategoryId)
+            .WhereIf(!string.IsNullOrWhiteSpace(pq.CategorySlug), p => p.Category.UrlSlug == pq.CategorySlug)
+            .WhereIf(pq.PostedYear > 0, p => p.PostedDate.Year == pq.PostedYear)
+            .WhereIf(pq.PostedMonth > 0, p => p.PostedDate.Month == pq.PostedMonth)
+            .WhereIf(pq.TagId > 0, p => p.Tags.Any(x => x.Id == pq.TagId))
+            .WhereIf(!string.IsNullOrWhiteSpace(pq.TagSlug), p => p.Tags.Any(x => x.UrlSlug == pq.TagSlug))
+            .WhereIf(pq.PublishedOnly != null, p => p.Published == pq.PublishedOnly);
+    }
+    public async Task<IPagedList<Post>> GetPagedPostsAsync(
+            PostQuery pq,
+            int pageNumber = 1,
+            int pageSize = 10,
+            CancellationToken cancellationToken = default)
+    {
+        return await FilterPost(pq)
+            .ToPagedListAsync(
+                pageNumber, pageSize,
+                nameof(Post.PostedDate), "DESC",
+                cancellationToken);
+    }
     //Câu 1. T : Tương tự câu trên nhưng yêu cầu trả về kiểu IPagedList<T>. Trong đó T
     //là kiểu dữ liệu của đối tượng mới được tạo từ đối tượng Post.Hàm này có
     //thêm một đầu vào là Func<IQueryable<Post>, IQueryable<T>> mapper

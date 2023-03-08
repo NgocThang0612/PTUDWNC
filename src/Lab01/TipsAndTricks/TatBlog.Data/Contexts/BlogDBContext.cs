@@ -19,11 +19,17 @@ public class BlogDBContext : DbContext
 
     public DbSet<Tag> Tags { get; set; }
 
+    public BlogDBContext(DbContextOptions<BlogDBContext> options)
+            : base(options)
+    {
+
+    }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        // Thay đổi chuỗi kết nối cho phù hợp
-        //optionsBuilder.UseSqlServer(@"Server=LAPTOP-HRP2I52Q;Database=TatBlog;
-        //     Trusted_Connection=True;MultipleActiveResultSets=true");
+        //Thay đổi chuỗi kết nối cho phù hợp
+        optionsBuilder.UseSqlServer(@"Server=LAPTOP-HRP2I52Q;Database=TatBlog;
+             Trusted_Connection=True;MultipleActiveResultSets=true");
 
         optionsBuilder.UseSqlServer(@"Data Source=LAPTOP-HRP2I52Q;Initial Catalog=TatBlog;Integrated Security=True;TrustServerCertificate=true;MultipleActiveResultSets=true;");
     }
@@ -31,6 +37,6 @@ public class BlogDBContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(
-            typeof(Category).Assembly);
+            typeof(CategoryMap).Assembly);
     }
 }

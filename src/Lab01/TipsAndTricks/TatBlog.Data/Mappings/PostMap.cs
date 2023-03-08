@@ -68,6 +68,6 @@ public class PostMap : IEntityTypeConfiguration<Post>
 
         builder.HasMany(p => p.Tags)
             .WithMany(t => t.Posts)
-            .UsingEntity(pt => pt.ToTable("PostTags"));
+            .UsingEntity(pt => pt.ToTable("PostTag"));
     }
 }

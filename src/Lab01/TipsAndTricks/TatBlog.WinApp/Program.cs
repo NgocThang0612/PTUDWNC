@@ -321,7 +321,7 @@ async void Cau1r()
 
 
 //Phần 2:
-IAuthorRepository authorRepo = new AuthorRepository(context);
+//IAuthorRepository authorRepo = new AuthorRepository(context);
 async void Cau2b()
 {
     //Câu 2. B : Tìm một tác giả theo mã số
