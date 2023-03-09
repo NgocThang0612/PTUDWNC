@@ -37,9 +37,9 @@ public interface IBlogRepository
 
     //// Lấy danh sách chuyên mục và số lượng bài viết
     //// nằm thuộc từng chuyên mục/chủ đề
-    //Task<IList<CategoryItem>> GetCategoriesAsync(
-    //    bool showOnMenu = false,
-    //    CancellationToken cancellationToken = default);
+    Task<IList<CategoryItem>> GetCategoriesAsync(
+        bool showOnMenu = false,
+        CancellationToken cancellationToken = default);
 
     //// Tăng số lượt xem của một bài viết
     //Task IncreaseViewCountAsync(
@@ -133,7 +133,13 @@ public interface IBlogRepository
 
     //Câu 1 . S : Tìm và phân trang các bài viết thỏa mãn điều kiện tìm kiếm được cho trong
     //đối tượng PostQuery(kết quả trả về kiểu IPagedList<Post>)
-    Task<IPagedList<Post>> GetPagedPostByPostQueryAsync(
+    IQueryable<Post> FilterPost(PostQuery pq);
+    Task<IPagedList<Post>> GetPagedPostsAsync(
+            PostQuery pq,
+            int pageNumber = 1,
+            int pageSize = 10,
+            CancellationToken cancellationToken = default);
+    Task<IPagedList<Post>> GetPagedPostsAsync(PostQuery pq,
         IPagingParams pagingParams,
         CancellationToken cancellationToken = default);
 

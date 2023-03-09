@@ -16,8 +16,10 @@ public class PostQuery
     public int CategoryId { get; set; }
     public string CategorySlug { get; set; }
     public string TagSlug { get; set; }
+    public string AuthorSlug { get; set; }
+    public bool PublishedOnly { get; set; }
     public int PostedYear { get; set; }
     public int PostedMonth { get; set; }
+    public string Keyword { get; set; }
     public DateTime PostedDate { get; set; }
-    public IList<Tag> Tags { get; set; }
 }
