@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TatBlog.Core.Constants;
 using TatBlog.Services.Blogs;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace TatBlog.WebApp.Controllers
 {
@@ -28,6 +29,130 @@ namespace TatBlog.WebApp.Controllers
 
                 // Tìm bài viết theo từ khóa
                 Keyword = keyword
+            };
+
+            // Truy vấn các bài viết theo điều kiện đã tạo
+            var postList = await _blogRepository
+                .GetPagedPostsAsync(postQuery, pageNumber, pageSize);
+
+            // Lưu lại điều kiện truy vấn để hiển thị trong View
+            ViewBag.PostQuery = postQuery;
+
+            // Truyền danh sách bài viết vào View để render ra HTML
+            return View(postList);
+
+            ViewBag.CurrentTime = DateTime.Now.ToString("HH:mm:ss");
+
+            //return View();
+        }
+        public async Task<IActionResult> Category(
+            string slug = null,
+            int pageNumber = 1,
+            int pageSize = 2)
+        {
+            // Tạo đối tượng chứa các điều kiện truy vấn
+            var postQuery = new PostQuery()
+            {
+                // Chỉ lấy những bài viết có trạng thái Published
+                PublishedOnly = true,
+
+                // Tìm bài viết theo từ khóa
+                CategorySlug = slug
+            };
+
+            // Truy vấn các bài viết theo điều kiện đã tạo
+            var postList = await _blogRepository
+                .GetPagedPostsAsync(postQuery, pageNumber, pageSize);
+
+            // Lưu lại điều kiện truy vấn để hiển thị trong View
+            ViewBag.PostQuery = postQuery;
+
+            // Truyền danh sách bài viết vào View để render ra HTML
+            return View(postList);
+
+            ViewBag.CurrentTime = DateTime.Now.ToString("HH:mm:ss");
+
+            //return View();
+        }
+
+        public async Task<IActionResult> Author(
+            string slug = null,
+            int pageNumber = 1,
+            int pageSize = 2)
+        {
+            // Tạo đối tượng chứa các điều kiện truy vấn
+            var postQuery = new PostQuery()
+            {
+                // Chỉ lấy những bài viết có trạng thái Published
+                PublishedOnly = true,
+
+                // Tìm bài viết theo từ khóa
+                AuthorSlug = slug
+            };
+
+            // Truy vấn các bài viết theo điều kiện đã tạo
+            var postList = await _blogRepository
+                .GetPagedPostsAsync(postQuery, pageNumber, pageSize);
+
+            // Lưu lại điều kiện truy vấn để hiển thị trong View
+            ViewBag.PostQuery = postQuery;
+
+            // Truyền danh sách bài viết vào View để render ra HTML
+            return View(postList);
+
+            ViewBag.CurrentTime = DateTime.Now.ToString("HH:mm:ss");
+
+            //return View();
+        }
+
+        public async Task<IActionResult> Tag(
+            string slug = null,
+            int pageNumber = 1,
+            int pageSize = 2)
+        {
+            // Tạo đối tượng chứa các điều kiện truy vấn
+            var postQuery = new PostQuery()
+            {
+                // Chỉ lấy những bài viết có trạng thái Published
+                PublishedOnly = true,
+
+                // Tìm bài viết theo từ khóa
+                PostSlug = slug
+            };
+
+            // Truy vấn các bài viết theo điều kiện đã tạo
+            var postList = await _blogRepository
+                .GetPagedPostsAsync(postQuery, pageNumber, pageSize);
+
+            // Lưu lại điều kiện truy vấn để hiển thị trong View
+            ViewBag.PostQuery = postQuery;
+
+            // Truyền danh sách bài viết vào View để render ra HTML
+            return View(postList);
+
+            ViewBag.CurrentTime = DateTime.Now.ToString("HH:mm:ss");
+
+            //return View();
+        }
+
+        public async Task<IActionResult> Post(
+            int year ,
+            int month ,
+            int day ,
+            string slug = null,
+            int pageNumber = 1,
+            int pageSize = 2)
+        {
+            // Tạo đối tượng chứa các điều kiện truy vấn
+            var postQuery = new PostQuery()
+            {
+                // Chỉ lấy những bài viết có trạng thái Published
+                PublishedOnly = true,
+
+                // Tìm bài viết theo từ khóa
+                PostSlug = slug
+                
+
             };
 
             // Truy vấn các bài viết theo điều kiện đã tạo

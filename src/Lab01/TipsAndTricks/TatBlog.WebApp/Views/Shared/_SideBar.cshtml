@@ -5,6 +5,15 @@
     <!-- Các chuyên mục/chủ đề -->
     @await Component.InvokeAsync("CategoriesWidget")
 
+    <!-- TOP 3 bài viết được xem nhiều nhất -->
+    @await Component.InvokeAsync("FeaturedPostsWidget")
+
+    <!-- TOP 5 bài viết ngẫu nhiên -->
+    @await Component.InvokeAsync("RandomPostsWidget")
+
+    <!-- TOP 4 tác giả có nhiều bài viết nhất -->
+    @*@await Component.InvokeAsync("BestAuthorsWidget")*@
+
     <!-- Top bài viết nổi bật -->
     <h1>
         Bài viết nổi bật
@@ -16,8 +25,6 @@
     </h1>
 
     <!-- Tag cloud -->
-    <h1>
-        Tag cloud
-    </h1>
+    @await Component.InvokeAsync("CategoriesWidget")    
 </div>
 

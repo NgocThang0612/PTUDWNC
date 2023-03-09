@@ -26,9 +26,9 @@ public interface IBlogRepository
     //// CancellationToken cho phép hủy liên kết giữa các luồng, các Task object
 
     //// Tìm top N bài viết phổ biến được nhiều người xem nhất
-    //Task<IList<Post>> GetPopularArticlesAsync(
-    //    int numPosts,
-    //    CancellationToken cancellationToken= default);
+    Task<IList<Post>> GetPopularArticlesAsync(
+        int numPosts,
+        CancellationToken cancellationToken = default);
 
     //// Kiểm tra xem tên định danh của bài viết đã có hay chưa
     //Task<bool> IsPostSlugExistedAsync(

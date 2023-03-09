@@ -61,16 +61,16 @@ public class BlogRepository : IBlogRepository
     //}
 
     //// Tìm top N bài viết phổ biến được nhiều người xem nhất
-    //public async Task<IList<Post>> GetPopularArticlesAsync(
-    //    int numPosts, CancellationToken cancellationToken = default)
-    //{
-    //    return await _context.Set<Post>()
-    //        .Include(x => x.Author)
-    //        .Include(x => x.Category)
-    //        .OrderByDescending(p => p.ViewCount)
-    //        .Take(numPosts)
-    //        .ToListAsync(cancellationToken);
-    //}
+    public async Task<IList<Post>> GetPopularArticlesAsync(
+        int numPosts, CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<Post>()
+            .Include(x => x.Author)
+            .Include(x => x.Category)
+            .OrderByDescending(p => p.ViewCount)
+            .Take(numPosts)
+            .ToListAsync(cancellationToken);
+    }
 
     // Kiểm tra xem tên định danh của bài viết đã có hay chưa
     public async Task<bool> IsPostSlugExistedAsync(
@@ -325,7 +325,7 @@ public class BlogRepository : IBlogRepository
     public async Task<IList<Post>> RandomPostAsync(int N, CancellationToken cancellationToken = default)
     {
         return (IList<Post>)await _context.Set<Post>()
-            .Select(x => Guid.NewGuid())
+            .OrderBy(x => Guid.NewGuid())
             .Take(N).ToListAsync(cancellationToken);
     }
 
@@ -354,20 +354,23 @@ public class BlogRepository : IBlogRepository
     }
     public IQueryable<Post> FilterPost(PostQuery pq)
     {
-        return _context.Set<Post>()
+        var query = _context.Set<Post>()
             .Include(c => c.Category)
             .Include(t => t.Tags)
-            .Include(a => a.Author)
+            .Include(a => a.Author);
+        return query
             .WhereIf(pq.AuthorId > 0, p => p.AuthorId == pq.AuthorId)
-            .WhereIf(!string.IsNullOrWhiteSpace(pq.AuthorSlug), p => p.UrlSlug == pq.AuthorSlug)
+            .WhereIf(!string.IsNullOrWhiteSpace(pq.AuthorSlug), p => p.Author.UrlSlug.Contains(pq.AuthorSlug))
             .WhereIf(pq.PostId > 0, p => p.Id == pq.PostId)
             .WhereIf(pq.CategoryId > 0, p => p.CategoryId == pq.CategoryId)
             .WhereIf(!string.IsNullOrWhiteSpace(pq.CategorySlug), p => p.Category.UrlSlug == pq.CategorySlug)
             .WhereIf(pq.PostedYear > 0, p => p.PostedDate.Year == pq.PostedYear)
             .WhereIf(pq.PostedMonth > 0, p => p.PostedDate.Month == pq.PostedMonth)
             .WhereIf(pq.TagId > 0, p => p.Tags.Any(x => x.Id == pq.TagId))
-            .WhereIf(!string.IsNullOrWhiteSpace(pq.TagSlug), p => p.Tags.Any(x => x.UrlSlug == pq.TagSlug))
+            .WhereIf(!string.IsNullOrWhiteSpace(pq.PostSlug), p => p.UrlSlug == pq.PostSlug)
             .WhereIf(pq.PublishedOnly != null, p => p.Published == pq.PublishedOnly);
+
+            
     }
     public async Task<IPagedList<Post>> GetPagedPostsAsync(
             PostQuery pq,
