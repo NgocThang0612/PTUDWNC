@@ -74,7 +74,7 @@ app.Run();
 //{
 //    var seeder = scope.ServiceProvider.GetRequiredService<IDataSeeder>();
 //    seeder.Initialize();
-//}    
+//}
 
 //app.Run();
 

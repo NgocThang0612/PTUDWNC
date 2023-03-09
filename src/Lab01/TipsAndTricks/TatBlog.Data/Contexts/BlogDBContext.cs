@@ -22,9 +22,10 @@ public class BlogDBContext : DbContext
     public BlogDBContext(DbContextOptions<BlogDBContext> options)
             : base(options)
     {
-
+        
     }
 
+    public BlogDBContext() { }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         //Thay đổi chuỗi kết nối cho phù hợp
