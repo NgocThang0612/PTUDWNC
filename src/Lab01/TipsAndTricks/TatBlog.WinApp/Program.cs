@@ -147,6 +147,7 @@ async void Cau1c()
           tag.Id, tag.Name, tag.UrlSlug, tag.Description);
     }
 }
+Cau1c();
 
 async void Cau1d()
 {

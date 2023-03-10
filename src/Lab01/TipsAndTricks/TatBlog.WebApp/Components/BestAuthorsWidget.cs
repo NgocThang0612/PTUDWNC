@@ -1,22 +1,22 @@
-﻿//using Microsoft.AspNetCore.Mvc;
-//using TatBlog.Services.Blogs;
+﻿using Microsoft.AspNetCore.Mvc;
+using TatBlog.Services.Authors;
+using TatBlog.Services.Blogs;
 
-//namespace TatBlog.WebApp.Components;
+namespace TatBlog.WebApp.Components;
 
-//public class BestAuthorsWidget : ViewComponent
-//{
-//    private readonly IBlogRepository _blogRepository;
+public class BestAuthorsWidget : ViewComponent
+{
+    private readonly IAuthorRepository _authorRepository;
 
-//    public BestAuthorsWidget(IBlogRepository blogRepository)
-//    {
-//        _blogRepository = blogRepository;
-//    }
+    public BestAuthorsWidget(IAuthorRepository authorRepository)
+    {
+        _authorRepository = authorRepository;
+    }
 
-//    public async Task<IViewComponentResult> InvokeAsync()
-//    {
-//        // TOP 4 tác giả có nhiều bài viết nhất
-//        var authors = await _blogRepository.ListAuthorAsync(4);
-
-//        return View(authors);
-//    }
-//}
+    public async Task<IViewComponentResult> InvokeAsync()
+    {
+        // TOP 4 tác giả có nhiều bài viết nhất
+        var authors = await _authorRepository.ListAuthorAsync(4);
+        return View(authors);
+    }
+}

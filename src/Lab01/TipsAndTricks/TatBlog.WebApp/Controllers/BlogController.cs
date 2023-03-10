@@ -117,7 +117,7 @@ namespace TatBlog.WebApp.Controllers
                 PublishedOnly = true,
 
                 // Tìm bài viết theo từ khóa
-                PostSlug = slug
+                TagSlug = slug
             };
 
             // Truy vấn các bài viết theo điều kiện đã tạo
@@ -129,10 +129,6 @@ namespace TatBlog.WebApp.Controllers
 
             // Truyền danh sách bài viết vào View để render ra HTML
             return View(postList);
-
-            ViewBag.CurrentTime = DateTime.Now.ToString("HH:mm:ss");
-
-            //return View();
         }
 
         public async Task<IActionResult> Post(
@@ -150,8 +146,41 @@ namespace TatBlog.WebApp.Controllers
                 PublishedOnly = true,
 
                 // Tìm bài viết theo từ khóa
-                PostSlug = slug
+                TagSlug = slug,
+                PostedYear = year ,
+                PostedMonth= month ,
+                PostedDay= day ,
                 
+            };
+
+            // Truy vấn các bài viết theo điều kiện đã tạo
+            var postList = await _blogRepository
+                .GetPagedPostsAsync(postQuery, pageNumber, pageSize);
+            await _blogRepository.IncreaseViewCountAsync(postList.FirstOrDefault().Id);
+
+            // Lưu lại điều kiện truy vấn để hiển thị trong View
+            ViewBag.PostQuery = postQuery;
+
+            // Truyền danh sách bài viết vào View để render ra HTML
+            return View(postList);
+
+        }
+
+        public async Task<IActionResult> Archives(
+            int year,
+            int month,
+            int pageNumber = 1,
+            int pageSize = 2)
+        {
+            // Tạo đối tượng chứa các điều kiện truy vấn
+            var postQuery = new PostQuery()
+            {
+                // Chỉ lấy những bài viết có trạng thái Published
+                PublishedOnly = true,
+
+                // Tìm bài viết theo từ khóa
+                PostedYear = year,
+                PostedMonth = month,
 
             };
 
@@ -165,9 +194,6 @@ namespace TatBlog.WebApp.Controllers
             // Truyền danh sách bài viết vào View để render ra HTML
             return View(postList);
 
-            ViewBag.CurrentTime = DateTime.Now.ToString("HH:mm:ss");
-
-            //return View();
         }
 
         public IActionResult About()

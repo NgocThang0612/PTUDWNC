@@ -8,6 +8,8 @@ namespace TatBlog.Core.DTO;
 
 public class AuthorItem
 {
+    public int PostCount;
+
     public int Id { get; set; }
     public string FullName { get; set; }
     public string UrlSlug { get; set; }

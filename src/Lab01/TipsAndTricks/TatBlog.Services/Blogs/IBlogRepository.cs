@@ -42,9 +42,9 @@ public interface IBlogRepository
         CancellationToken cancellationToken = default);
 
     //// Tăng số lượt xem của một bài viết
-    //Task IncreaseViewCountAsync(
-    //    int postId,
-    //    CancellationToken cancellationToken = default);
+    Task IncreaseViewCountAsync(
+        int postId,
+        CancellationToken cancellationToken = default);
 
     //// Lấy danh sách từ khóa/thẻ và phân trang theo
     //// các tham số pagingParams
@@ -149,22 +149,7 @@ public interface IBlogRepository
     //để ánh xạ các đối tượng Post thành các đối tượng T theo yêu cầu.
     #endregion
     #region
-    //Câu 2. A : Tạo interface IAuthorRepository và lớp AuthorRepository. 
-    //Câu 2. B : Tìm một tác giả theo mã số
-    Task<Author> GetAuthorByIdAsync(int Id, CancellationToken cancellationToken = default);
-    //Câu 2. C : Tìm một tác giả theo tên định danh (slug). 
-    Task<Author> GetAuthorByUrlSlugAsync(string Slug, CancellationToken cancellationToken = default);
-    //Câu 2. D : Lấy và phân trang danh sách tác giả kèm theo số lượng bài viết của tác giả
-    //đó.Kết quả trả về kiểu IPagedList<AuthorItem>.
-    Task<IPagedList<AuthorItem>> GetPagedAuthorAsync(
-        IPagingParams pagingParams,
-        CancellationToken cancellationToken = default);
-    //Câu 2. E : Thêm hoặc cập nhật thông tin một tác giả.
-    Task AddAuthorAsync(
-        Author author,
-        CancellationToken cancellationToken = default);
-    //Câu 2. F : Tìm danh sách N tác giả có nhiều bài viết nhất. N là tham số đầu vào.
-    Task<IList<Author>> ListAuthorAsync(int N, CancellationToken cancellationToken = default);
+    
     #endregion
     #region
     //Câu 3. A : Tạo lớp Subscriber để lưu trữ Email của người đăng ký, ngày đăng ký,

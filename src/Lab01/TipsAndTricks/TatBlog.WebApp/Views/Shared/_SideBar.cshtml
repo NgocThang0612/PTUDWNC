@@ -11,8 +11,14 @@
     <!-- TOP 5 bài viết ngẫu nhiên -->
     @await Component.InvokeAsync("RandomPostsWidget")
 
+    <!-- Danh sách các thẻ (tag) -->
+    @await Component.InvokeAsync("TagCloudWidget")
+
     <!-- TOP 4 tác giả có nhiều bài viết nhất -->
-    @*@await Component.InvokeAsync("BestAuthorsWidget")*@
+    @await Component.InvokeAsync("BestAuthorsWidget")
+
+    <!--  Danh sách 12 tháng gần nhất -->
+    @await Component.InvokeAsync("ArchivesWidget")
 
     <!-- Top bài viết nổi bật -->
     <h1>
@@ -20,11 +26,11 @@
     </h1>
 
     <!-- Đăng ký nhận tin mới -->
-    <h1>
-        Đăng ký nhận tin mới
-    </h1>
+    <h3 class="text-success mb-2">
+        Đăng ký nhận thông báo
+    </h3>
+    <partial name="_NewsletterForm" />
 
-    <!-- Tag cloud -->
-    @await Component.InvokeAsync("CategoriesWidget")    
+    
 </div>
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TatBlog.Data.Contexts;
 using TatBlog.Data.Seeders;
+using TatBlog.Services.Authors;
 using TatBlog.Services.Blogs;
 
 namespace TatBlog.WebApp.Extensions
@@ -26,8 +27,10 @@ namespace TatBlog.WebApp.Extensions
                     buider.Configuration
                         .GetConnectionString("DefaultConnection")));
 
+            buider.Services.AddScoped<IAuthorRepository, AuthorRepository>();
             buider.Services.AddScoped<IBlogRepository, BlogRepository>();
             buider.Services.AddScoped<IDataSeeder, DataSeeder>();
+
 
             return buider;
         }
