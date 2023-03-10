@@ -19,6 +19,8 @@ public class BlogDBContext : DbContext
 
     public DbSet<Tag> Tags { get; set; }
 
+    public DbSet<Subscriber> Subscribers { get; set; }
+
     public BlogDBContext(DbContextOptions<BlogDBContext> options)
             : base(options)
     {

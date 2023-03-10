@@ -111,16 +111,16 @@ public class BlogRepository : IBlogRepository
     }
 
     //// Tăng số lượt xem của một bài viết
-    //public async Task IncreaseViewCountAsync(
-    //    int postId,
-    //    CancellationToken cancellationToken = default)
-    //{
-    //    await _context.Set<Post>()
-    //        .Where(x => x.Id == postId)
-    //        .ExecuteUpdateAsync(p =>
-    //        p.SetProperty(x => x.ViewCount, x => x.ViewCount + 1),
-    //        cancellationToken);
-    //}
+    public async Task IncreaseViewCountAsync(
+        int postId,
+        CancellationToken cancellationToken = default)
+    {
+        await _context.Set<Post>()
+            .Where(x => x.Id == postId)
+            .ExecuteUpdateAsync(p =>
+            p.SetProperty(x => x.ViewCount, x => x.ViewCount + 1),
+            cancellationToken);
+    }
 
     //// Lấy danh sách từ khóa/thẻ và phân trang theo
     //// các tham số pagingParams
@@ -157,8 +157,8 @@ public class BlogRepository : IBlogRepository
     {
         IQueryable<Tag> tags = _context.Set<Tag>();
 
-        return await tags
-            .OrderBy(x => x.Id)
+        var query = tags
+            .OrderBy(x => x.Name)
             .Select(x => new TagItem()
             {
                 Id = x.Id,
@@ -166,8 +166,8 @@ public class BlogRepository : IBlogRepository
                 UrlSlug = x.UrlSlug,
                 Description = x.Description,
                 PostCount = x.Posts.Count(p => p.Published)
-            })
-            .ToListAsync(cancellationToken);
+            });
+            return await query.ToListAsync(cancellationToken);
     }
 
     //Câu 1.D : Xóa một thẻ theo mã cho trước
@@ -263,11 +263,21 @@ public class BlogRepository : IBlogRepository
 
     //Câu 1.K : Đếm số lượng bài viết trong N tháng gần nhất. N là tham số đầu vào. Kết
     //quả là một danh sách các đối tượng chứa các thông tin sau: Năm, Tháng, Số, Bài viết
-    public Task<IList<PostItem>> CountByPostAsync(int N, CancellationToken cancellationToken = default)
+    public async Task<IList<PostItem>> CountByPostAsync(int N, CancellationToken cancellationToken = default)
     {
-    
-        throw new NotImplementedException();
-    
+
+        return await _context.Set<Post>()
+            .GroupBy(x => new { x.PostedDate.Year, x.PostedDate.Month })
+            .Select(g => new PostItem()
+            {
+                Year = g.Key.Year,
+                Month = g.Key.Month,
+                PostCount = g.Count(x => x.Published)
+            })
+            .OrderByDescending(x => x.Year)
+            .ThenByDescending(x => x.Month)
+            .ToListAsync(cancellationToken);
+
     }
 
     //Câu 1.L : Tìm một bài viết theo mã số
@@ -367,7 +377,7 @@ public class BlogRepository : IBlogRepository
             .WhereIf(pq.PostedYear > 0, p => p.PostedDate.Year == pq.PostedYear)
             .WhereIf(pq.PostedMonth > 0, p => p.PostedDate.Month == pq.PostedMonth)
             .WhereIf(pq.TagId > 0, p => p.Tags.Any(x => x.Id == pq.TagId))
-            .WhereIf(!string.IsNullOrWhiteSpace(pq.PostSlug), p => p.UrlSlug == pq.PostSlug)
+            .WhereIf(!string.IsNullOrWhiteSpace(pq.TagSlug), p => p.UrlSlug == pq.TagSlug)
             .WhereIf(pq.PublishedOnly != null, p => p.Published == pq.PublishedOnly);
 
             
@@ -393,80 +403,6 @@ public class BlogRepository : IBlogRepository
     #endregion
 
     #region
-    //Câu 2. B : Tìm một tác giả theo mã số
-    public async Task<Author> GetAuthorByIdAsync(int Id, CancellationToken cancellationToken = default)
-    {
-        return await _context.Set<Author>()
-            .Where(t => t.Id == Id)
-            .FirstOrDefaultAsync(cancellationToken);
-    }
-
-    //Câu 2. C : Tìm một tác giả theo tên định danh (slug)
-    public async Task<Author> GetAuthorByUrlSlugAsync(string Slug, CancellationToken cancellationToken = default)
-    {
-        return await _context.Set<Author>()
-            .Where(t => t.UrlSlug == Slug)
-            .FirstOrDefaultAsync(cancellationToken);
-    }
-
-    //Câu 2. D : Lấy và phân trang danh sách tác giả kèm theo số lượng bài viết của tác giả
-    //đó.Kết quả trả về kiểu IPagedList<AuthorItem>.
-    public async Task<IPagedList<AuthorItem>> GetPagedAuthorAsync(IPagingParams pagingParams, CancellationToken cancellationToken = default)
-    {
-        var authorQuery = _context.Set<Author>()
-            .Select(x => new AuthorItem()
-            {
-                Id = x.Id,
-                FullName = x.FullName,
-                UrlSlug = x.UrlSlug,
-                ImageUrl = x.ImageUrl,
-                JoinedDate = x.JoinedDate,
-                Email = x.Email,
-                Notes = x.Notes
-            });
-        return await authorQuery
-            .ToPagedListAsync(pagingParams, cancellationToken);
-    }
-
-    //Câu 2. E : Thêm hoặc cập nhật thông tin một tác giả
-    public async Task AddAuthorAsync(Author author, CancellationToken cancellationToken = default)
-    {
-        if (IsPostSlugExistedAsync(author.Id, author.UrlSlug).Result)
-            Console.WriteLine("Error: Exsited Slug");
-        else
-
-                if (author.Id > 0) // true: update || false: add
-        {
-            await _context.Set<Author>()
-                  .Where(x => x.Id == author.Id)
-                  .ExecuteUpdateAsync(c => c
-                    .SetProperty(x => x.FullName, author.FullName)
-                    .SetProperty(x => x.UrlSlug, author.UrlSlug)
-                    .SetProperty(x => x.ImageUrl, author.ImageUrl)
-                    .SetProperty(x => x.JoinedDate, author.JoinedDate)
-                    .SetProperty(x => x.Email, author.Email)
-                    .SetProperty(x => x.Notes, author.Notes)
-                    .SetProperty(x => x.Posts, author.Posts),
-                     cancellationToken);
-        }
-        else
-        {
-            _context.Authors.AddRange(author);
-            _context.SaveChanges();
-        }
-    }
-
-    //Câu 2. F : Tìm danh sách N tác giả có nhiều bài viết nhất. N là tham số đầu vào.
-    public async Task<IList<Author>> ListAuthorAsync(int N, CancellationToken cancellationToken = default)
-    {
-        return await _context.Set<Author>()
-            .Include(x => x.Posts)
-            .Include(x => x.Id)
-            .OrderByDescending(p => p.FullName)
-            .Take(N)
-            .ToListAsync(cancellationToken);
-    }
-
     
     #endregion
     #region

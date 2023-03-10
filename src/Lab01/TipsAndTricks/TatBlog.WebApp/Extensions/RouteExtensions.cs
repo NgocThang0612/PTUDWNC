@@ -14,11 +14,11 @@
                 pattern: "blog/author/{slug}",
                 defaults: new { controller = "Blog", action = "Author" });
             endpoints.MapControllerRoute(
-                name: "post-by-tag",
+                name: "posts-by-tag",
                 pattern: "blog/tag/{slug}",
                 defaults: new { controller = "Blog", action = "Tag" });
             endpoints.MapControllerRoute(
-                name: "single-post",
+                name: "posts-by-tag",
                 pattern: "blog/post/{year:int}/{month:int}/{day:int}/{slug}",
                 defaults: new { controller = "Blog", action = "Post" });
             endpoints.MapControllerRoute(

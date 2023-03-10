@@ -1,4 +1,4 @@
-﻿@*@model IList<Author>
+﻿@model IList<AuthorItem>
 
 <div class="mb-4">
     <h3 class="text-success mb-2">
@@ -8,14 +8,16 @@
     <ul class="list-group">
         @foreach (var item in Model)
         {
-                        <li class="list-group-item">
-                            <a asp-controller="Blog"
-                            asp-action="Author"
-                            asp-route-slug="@item.UrlSlug" 
-                            name="@item.FullName">
-                            @item.FullName
-                           </a>
-                        </li>
+           <li class="list-group-item">
+
+                 <a asp-controller="Blog"
+                   asp-action="Author"
+                   asp-route-slug="@item.UrlSlug" 
+                   name="@item.FullName">
+                   @item.FullName
+                    <span>(@item.PostCount)</span>
+                  </a>
+            </li>
         }
     </ul>
-</div>*@
+</div>
