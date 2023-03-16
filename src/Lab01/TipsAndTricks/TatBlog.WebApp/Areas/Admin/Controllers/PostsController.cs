@@ -86,7 +86,7 @@ public class PostsController : Controller
 
     [HttpPost]
     public async Task<IActionResult> Edit(
-        IValidator<PostEditModel> postValidator,
+        [FromServices]IValidator<PostEditModel> postValidator,
         PostEditModel model)
     {
         var validationResult = await postValidator.ValidateAsync(model);
