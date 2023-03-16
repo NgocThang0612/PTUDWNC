@@ -11,4 +11,6 @@ public class PostItem
     public int Year { get; set; }
     public int Month { get; set; }
     public int PostCount { get; set; }
+    public object CategoryName { get; set; }
+    public object Tags { get; set; }
 }

@@ -201,7 +201,7 @@ public class DataSeeder : IDataSeeder
                 Category = categories[1],
                 Tags = new List<Tag>()
                 {
-                    tags[0]
+                    tags[1]
                 }
             },
             new()
@@ -219,7 +219,7 @@ public class DataSeeder : IDataSeeder
                 Category = categories[2],
                 Tags = new List<Tag>()
                 {
-                    tags[0]
+                    tags[2]
                 }
             },
             new()
@@ -237,7 +237,7 @@ public class DataSeeder : IDataSeeder
                 Category = categories[3],
                 Tags = new List<Tag>()
                 {
-                    tags[0]
+                    tags[3]
                 }
             },
             new()
@@ -255,7 +255,7 @@ public class DataSeeder : IDataSeeder
                 Category = categories[4],
                 Tags = new List<Tag>()
                 {
-                    tags[0]
+                    tags[4]
                 }
             },
             new()
@@ -273,7 +273,7 @@ public class DataSeeder : IDataSeeder
                 Category = categories[5],
                 Tags = new List<Tag>()
                 {
-                    tags[0]
+                    tags[5]
                 }
             },
         };

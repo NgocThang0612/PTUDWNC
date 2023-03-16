@@ -19,7 +19,7 @@ namespace TatBlog.WebApp.Controllers
         public async Task<IActionResult> Index(
             [FromQuery(Name = "k")] string keyword = null,
             [FromQuery(Name = "p")] int pageNumber = 1,
-            [FromQuery(Name = "ps")] int pageSize = 2)
+            [FromQuery(Name = "ps")] int pageSize = 5)
         {
             // Tạo đối tượng chứa các điều kiện truy vấn
             var postQuery = new PostQuery()
@@ -41,9 +41,7 @@ namespace TatBlog.WebApp.Controllers
             // Truyền danh sách bài viết vào View để render ra HTML
             return View(postList);
 
-            ViewBag.CurrentTime = DateTime.Now.ToString("HH:mm:ss");
-
-            //return View();
+            
         }
         public async Task<IActionResult> Category(
             string slug = null,
@@ -70,9 +68,7 @@ namespace TatBlog.WebApp.Controllers
             // Truyền danh sách bài viết vào View để render ra HTML
             return View(postList);
 
-            ViewBag.CurrentTime = DateTime.Now.ToString("HH:mm:ss");
-
-            //return View();
+            
         }
 
         public async Task<IActionResult> Author(
@@ -100,9 +96,7 @@ namespace TatBlog.WebApp.Controllers
             // Truyền danh sách bài viết vào View để render ra HTML
             return View(postList);
 
-            ViewBag.CurrentTime = DateTime.Now.ToString("HH:mm:ss");
-
-            //return View();
+            
         }
 
         public async Task<IActionResult> Tag(
@@ -154,15 +148,15 @@ namespace TatBlog.WebApp.Controllers
             };
 
             // Truy vấn các bài viết theo điều kiện đã tạo
-            var postList = await _blogRepository
-                .GetPagedPostsAsync(postQuery, pageNumber, pageSize);
-            await _blogRepository.IncreaseViewCountAsync(postList.FirstOrDefault().Id);
+            var post = await _blogRepository
+                .GetPostAsync(year, month, slug);
+            await _blogRepository.IncreaseViewCountAsync(post.Id);
 
             // Lưu lại điều kiện truy vấn để hiển thị trong View
             ViewBag.PostQuery = postQuery;
 
             // Truyền danh sách bài viết vào View để render ra HTML
-            return View(postList);
+            return View(post);
 
         }
 
