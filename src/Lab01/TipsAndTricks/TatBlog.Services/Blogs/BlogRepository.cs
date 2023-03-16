@@ -29,38 +29,39 @@ public class BlogRepository : IBlogRepository
     #region
     //// Tìm bài viết có tên định danh là 'slug'
     //// và được đăng vào tháng 'month' năm 'year'
-    //public async Task<Post> GetPostAsync(
-    //    int year,
-    //    int month,
-    //    string slug,
-    //    CancellationToken cancellationToken = default)
-    //{
-    //    IQueryable<Post> postsQuery = _context.Set<Post>()
-    //    .Include(x => x.Category)
-    //    .Include(x => x.Author);
+    public async Task<Post> GetPostAsync(
+        int year,
+        int month,
+        string slug,
+        CancellationToken cancellationToken = default)
+    {
+        IQueryable<Post> postsQuery = _context.Set<Post>()
+        .Include(x => x.Category)
+        .Include(x => x.Tags)
+        .Include(x => x.Author);
 
-    //    if (year > 0)
-    //    {
-    //        postsQuery = postsQuery.Where(x => x.PostedDate.Year == year);
+        if (year > 0)
+        {
+            postsQuery = postsQuery.Where(x => x.PostedDate.Year == year);
 
-    //    }
+        }
 
-    //    if (month > 0)
-    //    {
-    //        postsQuery = postsQuery.Where(x => x.PostedDate.Month == month);
+        if (month > 0)
+        {
+            postsQuery = postsQuery.Where(x => x.PostedDate.Month == month);
 
-    //    }
+        }
 
-    //    if (!string.IsNullOrWhiteSpace(slug))
-    //    {
-    //        postsQuery = postsQuery.Where(x => x.UrlSlug == slug);
-    //    }
+        if (!string.IsNullOrWhiteSpace(slug))
+        {
+            postsQuery = postsQuery.Where(x => x.UrlSlug == slug);
+        }
 
-    //    return await postsQuery.FirstOrDefaultAsync(cancellationToken);
+        return await postsQuery.FirstOrDefaultAsync(cancellationToken);
 
-    //}
+    }
 
-    //// Tìm top N bài viết phổ biến được nhiều người xem nhất
+    // Tìm top N bài viết phổ biến được nhiều người xem nhất
     public async Task<IList<Post>> GetPopularArticlesAsync(
         int numPosts, CancellationToken cancellationToken = default)
     {
@@ -281,44 +282,69 @@ public class BlogRepository : IBlogRepository
     }
 
     //Câu 1.L : Tìm một bài viết theo mã số
-    public async Task<Post> GetPostByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<Post> GetPostByIdAsync(int id, bool p = true, CancellationToken cancellationToken = default)
     {
         return await _context.Set<Post>()
+            .Include(x => x.Category)
+            .Include(x => x.Author)
+            .Include(x => x.Tags)
             .Where(x => x.Id == id)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
     //Câu 1.M : Thêm hay cập nhật một bài viết.
-    public async Task AddPostAsync(Post post, CancellationToken cancellationToken = default)
+    public async Task<Post> CreateOrUpdatePostAsync(
+            Post post, IEnumerable<string> tags,
+            CancellationToken cancellationToken = default)
     {
-        if (IsPostSlugExistedAsync(post.Id, post.UrlSlug).Result)
-            Console.WriteLine("Error: Exsited Slug");
+        if (post.Id > 0)
+        {
+            await _context.Entry(post).Collection(x => x.Tags).LoadAsync(cancellationToken);
+        }
         else
+        {
+            post.Tags = new List<Tag>();
+        }
 
-                if (post.Id > 0) // true: update || false: add
+        var validTags = tags.Where(x => !string.IsNullOrWhiteSpace(x))
+            .Select(x => new
+            {
+                Name = x,
+                Slug = GenerateSlug(x)
+            })
+            .GroupBy(x => x.Slug)
+            .ToDictionary(g => g.Key, g => g.First().Name);
+
+
+        foreach (var kv in validTags)
         {
-            await _context.Set<Post>()
-                  .Where(x => x.Id == post.Id)
-                  .ExecuteUpdateAsync(c => c
-                    .SetProperty(x => x.Title, post.Title)
-                    .SetProperty(x => x.ShortDescription, post.ShortDescription)
-                    .SetProperty(x => x.Description, post.Description)
-                    .SetProperty(x => x.Meta, post.Meta)
-                    .SetProperty(x => x.UrlSlug, post.UrlSlug)
-                    .SetProperty(x => x.ImageUrl, post.ImageUrl)
-                    .SetProperty(x => x.ViewCount, post.ViewCount)
-                    .SetProperty(x => x.Published, post.Published)
-                    .SetProperty(x => x.ModifiedDate, post.ModifiedDate)
-                    .SetProperty(x => x.PostedDate, post.PostedDate)
-                    .SetProperty(x => x.AuthorId, post.AuthorId)
-                    .SetProperty(x => x.CategoryId, post.CategoryId)
-                    .SetProperty(x => x.Tags, post.Tags), cancellationToken);
+            if (post.Tags.Any(x => string.Compare(x.UrlSlug, kv.Key, StringComparison.InvariantCultureIgnoreCase) == 0)) continue;
+
+            var tag = await GetTagByUrlAsync(kv.Key, cancellationToken) ?? new Tag()
+            {
+                Name = kv.Value,
+                Description = kv.Value,
+                UrlSlug = kv.Key
+            };
+
+            post.Tags.Add(tag);
         }
+
+        post.Tags = post.Tags.Where(t => validTags.ContainsKey(t.UrlSlug)).ToList();
+
+        if (post.Id > 0)
+            _context.Update(post);
         else
-        {
-            _context.Posts.AddRange(post);
-            _context.SaveChanges();
-        }
+            _context.Add(post);
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return post;
+    }
+
+    private string GenerateSlug(string s)
+    {
+        return s.ToLower().Replace(".", "dot").Replace(" ", "-");
     }
 
     //Câu 1. N : Chuyển đổi trạng thái Published của bài viết
@@ -364,23 +390,30 @@ public class BlogRepository : IBlogRepository
     }
     public IQueryable<Post> FilterPost(PostQuery pq)
     {
-        var query = _context.Set<Post>()
-            .Include(c => c.Category)
-            .Include(t => t.Tags)
-            .Include(a => a.Author);
-        return query
+        var posts = _context.Set<Post>()
+                .Include(c => c.Category)
+                .Include(t => t.Tags)
+                .Include(a => a.Author);
+        IQueryable<Post> postQuery = posts
             .WhereIf(pq.AuthorId > 0, p => p.AuthorId == pq.AuthorId)
-            .WhereIf(!string.IsNullOrWhiteSpace(pq.AuthorSlug), p => p.Author.UrlSlug.Contains(pq.AuthorSlug))
+            .WhereIf(!string.IsNullOrWhiteSpace(pq.AuthorSlug), p => p.Author.UrlSlug == pq.AuthorSlug)
             .WhereIf(pq.PostId > 0, p => p.Id == pq.PostId)
             .WhereIf(pq.CategoryId > 0, p => p.CategoryId == pq.CategoryId)
-            .WhereIf(!string.IsNullOrWhiteSpace(pq.CategorySlug), p => p.Category.UrlSlug == pq.CategorySlug)
+            .WhereIf(!string.IsNullOrWhiteSpace(pq.CategorySlug), p => p.Category.UrlSlug.Equals(pq.CategorySlug))
+            .WhereIf(!string.IsNullOrWhiteSpace(pq.PostSlug), p => p.UrlSlug == pq.PostSlug)
             .WhereIf(pq.PostedYear > 0, p => p.PostedDate.Year == pq.PostedYear)
             .WhereIf(pq.PostedMonth > 0, p => p.PostedDate.Month == pq.PostedMonth)
+            .WhereIf(pq.PostedDay > 0, p => p.PostedDate.Day == pq.PostedDay)
             .WhereIf(pq.TagId > 0, p => p.Tags.Any(x => x.Id == pq.TagId))
-            .WhereIf(!string.IsNullOrWhiteSpace(pq.TagSlug), p => p.UrlSlug == pq.TagSlug)
-            .WhereIf(pq.PublishedOnly != null, p => p.Published == pq.PublishedOnly);
+            .WhereIf(!string.IsNullOrWhiteSpace(pq.TagSlug), p => p.Tags.Any(x => x.UrlSlug == pq.TagSlug))
+            .WhereIf(pq.PublishedOnly, p => p.Published == pq.PublishedOnly)
+            .WhereIf(!string.IsNullOrWhiteSpace(pq.Keyword), p => p.Title.Contains(pq.Keyword) ||
+                p.ShortDescription.Contains(pq.Keyword) ||
+                p.Description.Contains(pq.Keyword) ||
+                p.Category.Name.Contains(pq.Keyword) ||
+                p.Tags.Any(t => t.Name.Contains(pq.Keyword)));
 
-            
+        return postQuery;
     }
     public async Task<IPagedList<Post>> GetPagedPostsAsync(
             PostQuery pq,
@@ -394,6 +427,11 @@ public class BlogRepository : IBlogRepository
                 nameof(Post.PostedDate), "DESC",
                 cancellationToken);
     }
+
+    public Task GetAuthorsAsync()
+    {
+        throw new NotImplementedException();
+    }
     //Câu 1. T : Tương tự câu trên nhưng yêu cầu trả về kiểu IPagedList<T>. Trong đó T
     //là kiểu dữ liệu của đối tượng mới được tạo từ đối tượng Post.Hàm này có
     //thêm một đầu vào là Func<IQueryable<Post>, IQueryable<T>> mapper
@@ -403,7 +441,7 @@ public class BlogRepository : IBlogRepository
     #endregion
 
     #region
-    
+
     #endregion
     #region
     //Câu 3. A : Tạo lớp Subscriber để lưu trữ Email của người đăng ký, ngày đăng ký,

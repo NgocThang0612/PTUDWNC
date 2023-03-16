@@ -31,4 +31,8 @@ public interface IAuthorRepository
         CancellationToken cancellationToken = default);
     //Câu 2. F : Tìm danh sách N tác giả có nhiều bài viết nhất. N là tham số đầu vào.
     Task<IList<AuthorItem>> ListAuthorAsync(int N, CancellationToken cancellationToken = default);
+
+    //Câu 2 bla ble
+    Task<IList<AuthorItem>> GetAuthorsAsync(
+        CancellationToken cancellationToken = default);
 }

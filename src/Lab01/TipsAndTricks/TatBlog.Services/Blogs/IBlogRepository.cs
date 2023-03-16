@@ -18,11 +18,11 @@ public interface IBlogRepository
     // B. Phần hướng dẫn
     // Tìm bài viết có tên định danh là "slug"
     // và được đăng vào tháng 'month' năm 'year'
-    //Task<Post> GetPostAsync(
-    //    int year,
-    //    int month,
-    //    string slug,
-    //    CancellationToken cancellationToken = default);
+    Task<Post> GetPostAsync(
+        int year,
+        int month,
+        string slug,
+        CancellationToken cancellationToken = default);
     //// CancellationToken cho phép hủy liên kết giữa các luồng, các Task object
 
     //// Tìm top N bài viết phổ biến được nhiều người xem nhất
@@ -31,9 +31,9 @@ public interface IBlogRepository
         CancellationToken cancellationToken = default);
 
     //// Kiểm tra xem tên định danh của bài viết đã có hay chưa
-    //Task<bool> IsPostSlugExistedAsync(
-    //    int postId, string slug,
-    //    CancellationToken cancellationToken = default);
+    Task<bool> IsPostSlugExistedAsync(
+        int postId, string slug,
+        CancellationToken cancellationToken = default);
 
     //// Lấy danh sách chuyên mục và số lượng bài viết
     //// nằm thuộc từng chuyên mục/chủ đề
@@ -100,12 +100,12 @@ public interface IBlogRepository
         CancellationToken cancellationToken = default);
 
     //Câu 1.L : Tìm một bài viết theo mã số
-    Task<Post> GetPostByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<Post> GetPostByIdAsync(int id, bool p = true ,CancellationToken cancellationToken = default);
 
     //Câu 1.M : Thêm hay cập nhật một bài viết.
-    Task AddPostAsync(
-        Post post,
-        CancellationToken cancellationToken = default);
+    Task<Post> CreateOrUpdatePostAsync(
+            Post post, IEnumerable<string> tags,
+            CancellationToken cancellationToken = default);
 
     //Câu 1. N : Chuyển đổi trạng thái Published của bài viết
     Task SwitchPublishAsync(
@@ -143,13 +143,14 @@ public interface IBlogRepository
         IPagingParams pagingParams,
         CancellationToken cancellationToken = default);
 
+
     //Câu 1. T : Tương tự câu trên nhưng yêu cầu trả về kiểu IPagedList<T>. Trong đó T
     //là kiểu dữ liệu của đối tượng mới được tạo từ đối tượng Post.Hàm này có
     //thêm một đầu vào là Func<IQueryable<Post>, IQueryable<T>> mapper
     //để ánh xạ các đối tượng Post thành các đối tượng T theo yêu cầu.
     #endregion
     #region
-    
+
     #endregion
     #region
     //Câu 3. A : Tạo lớp Subscriber để lưu trữ Email của người đăng ký, ngày đăng ký,
@@ -179,6 +180,7 @@ public interface IBlogRepository
     //SearchSubscribersAsync(pagingParams, keyword, unsubscribed,
     //involuntary).
 
+    
 
     #endregion
 }
