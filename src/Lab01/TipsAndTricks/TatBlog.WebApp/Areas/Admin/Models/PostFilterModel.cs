@@ -21,6 +21,9 @@ public class PostFilterModel
     [DisplayName("Tháng")]
     public int? Month { get; set; }
 
+    [DisplayName("Chưa xuất bản")]
+    public bool NotPublished { get; set; } = false;
+
     public IEnumerable<SelectListItem> AuthorList { get; set; }
     public IEnumerable<SelectListItem> CategoryList { get; set; }
     public IEnumerable<SelectListItem> MonthList { get; set; }

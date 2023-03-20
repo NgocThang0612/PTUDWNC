@@ -41,7 +41,9 @@ public class PostsController : Controller
     //    return View();
     //}
 
-    public async Task<IActionResult> Index(PostFilterModel model)
+    public async Task<IActionResult> Index(PostFilterModel model,
+        [FromQuery(Name = "p")] int pageNumber = 1,
+        [FromQuery(Name = "ps")] int pageSize = 5)
     {
         _logger.LogInformation("Tạo điều kiện truy vấn");
 
@@ -58,10 +60,24 @@ public class PostsController : Controller
         //};
 
         ViewBag.PostsList = await _blogRepository
-            .GetPagedPostsAsync(postQuery, 1, 5);
+            .GetPagedPostsAsync(postQuery, pageNumber, pageSize);
 
         await PopulatePostFilterModelAsync(model);
         return View(model);
+    }
+
+   // Xóa post
+   public async Task<IActionResult> DeletePost(int id = 0)
+    {
+        await _blogRepository.DeletePostByIdAsync(id);
+        return RedirectToAction(nameof(Index));
+    }
+
+    // Chuyển đổi Published
+    public async Task<IActionResult> TogglePublished(int id = 0)
+    {
+        await _blogRepository.TogglePublishedFlagAsync(id);
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpGet]
@@ -196,5 +212,14 @@ public class PostsController : Controller
             Text = c.Name,
             Value = c.Id.ToString()
         });
+    }
+
+    public async Task<IActionResult> Filtrate(PostFilterModel model, [FromQuery(Name = "p")] int pageNumber = 1,
+        [FromQuery(Name = "ps")] int pageSize = 5)
+    {
+        PostQuery pq = _mapper.Map<PostQuery>(model);
+        ViewBag.PostsList = await _blogRepository.GetPagedPostsAsync(pq, pageNumber, pageSize);
+        await PopulatePostFilterModelAsync(model);
+        return View("Index",model);
     }
 }

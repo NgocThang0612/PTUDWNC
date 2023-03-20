@@ -1,7 +1,71 @@
-﻿@{
-    ViewData["PageTitle"] = "Bảng điều khiển";
+﻿@using TatBlog.Core.Contracts;
+@using TatBlog.Core.Entities;
+@using TatBlog.Core.Constants;
+@*@model TatBlog.WebApp.Areas.Admin.Models.TagsFilterModel;*@
+@model IPagedList<TagItem>
+@{
+    ViewData["PageTitle"] = "Danh sách thẻ";
+    var tagsList = Model;
+    var stateList = new List<SelectListItem>
+    {
+        new SelectListItem("Co", "true"),
+        new SelectListItem("Khong", "false"),
+
+    };
 }
 
 <h1>
-    Danh sách Thẻ
+    Danh sách thẻ
 </h1>
+
+
+
+<!-- Hiển thị Form để tìm bài viết -->
+<partial name="_TagsFilterPane" />
+
+@if (tagsList != null && tagsList.Count > 0)
+{
+    <table class="table table-responsive table-striped">
+        <thead>
+            <tr>
+                <th>Tên thẻ</th>
+                <th>Số thẻ</th>
+                <th>Nội dung</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tag in tagsList)
+            {
+                <tr>
+                    <td>
+                        <a asp-area="Admin"
+                   asp-controller="Tags"
+                   asp-action="Edit"
+                   asp-route-id="@tag.Id"
+                   class="text-bold">
+                            @tag.Name
+                        </a>
+
+                        <p class="text-muted">
+                            @tag.Description
+                        </p>
+                    </td>
+                    <td>
+                        @tag.PostCount
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <partial name="_Pager" model="@tagsList" />
+}
+else
+{
+    <h1 class="text-danger">
+        Không tìm thấy thẻ nào
+    </h1>
+}
+
+
+

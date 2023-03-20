@@ -71,7 +71,7 @@ public interface IBlogRepository
     Task<Category> GetCategoryByUrlAsync(string slug, CancellationToken cancellationToken = default);
 
     //Câu 1.F : Tìm một chuyên mục theo mã số cho trước
-    Task<Category> GetCategoryByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<Category> GetCategoryByIdAsync(int id, bool p = true, CancellationToken cancellationToken = default);
 
     //Câu 1.G : Thêm hoặc cập nhật một chuyên mục/chủ đề
     Task AddCategoryAsync(
@@ -79,9 +79,15 @@ public interface IBlogRepository
         CancellationToken cancellationToken = default);
 
     //Câu 1.H : Xóa một chuyên mục theo mã số cho trước
-    Task DeleteCategoryByIdAsync(
-        int CategoryId,
+    Task<bool> DeleteCategoryByIdAsync(int id, CancellationToken cancellationToken = default);
+
+    // Xóa post
+    Task <bool> DeletePostByIdAsync(
+        int PostId,
         CancellationToken cancellationToken = default);
+
+    Task<bool> TogglePublishedFlagAsync(
+        int postId, CancellationToken cancellationToken = default);
 
     //Câu 1.I : Kiểm tra tên định danh (slug) của một chuyên mục đã tồn tại hay chưa
     Task<bool> IsExitedCategoryBySlugAsync(
@@ -89,6 +95,11 @@ public interface IBlogRepository
         CancellationToken cancellationToken = default);
 
     //Câu 1.J : Lấy và phân trang danh sách chuyên mục, kết quả trả về kiểu IPagedList<CategoryItem>
+    Task<IPagedList<CategoryItem>> GetPagedCategoryAsync(
+            
+            int pageNumber = 1,
+            int pageSize = 10,
+            CancellationToken cancellationToken = default);
     Task<IPagedList<CategoryItem>> GetPagedCategoryAsync(
         IPagingParams pagingParams,
         CancellationToken cancellationToken = default);
@@ -148,6 +159,15 @@ public interface IBlogRepository
     //là kiểu dữ liệu của đối tượng mới được tạo từ đối tượng Post.Hàm này có
     //thêm một đầu vào là Func<IQueryable<Post>, IQueryable<T>> mapper
     //để ánh xạ các đối tượng Post thành các đối tượng T theo yêu cầu.
+
+    //Chuyển đổi Categories
+    Task<bool> ToggleShowOnMenuAsync(
+            int id = 0,
+            CancellationToken cancellationToken = default);
+
+    //
+    Task<Category> CreateOrUpdateCategoryAsync(
+        Category category, CancellationToken cancellationToken = default);
     #endregion
     #region
 
@@ -180,7 +200,7 @@ public interface IBlogRepository
     //SearchSubscribersAsync(pagingParams, keyword, unsubscribed,
     //involuntary).
 
-    
+
 
     #endregion
 }
