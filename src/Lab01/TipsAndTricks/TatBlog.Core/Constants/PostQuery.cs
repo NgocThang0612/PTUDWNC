@@ -20,10 +20,14 @@ public class PostQuery
     public string TagSlug { get; set; }
     public string AuthorSlug { get; set; }
     public bool PublishedOnly { get; set; }
+    public bool NotPublished { get; set; }
     public int PostedDay { get; set; }
     public int PostedYear { get; set; }
     public int PostedMonth { get; set; }
     public string Keyword { get; set; }
     public DateTime PostedDate { get; set; }
     public string PostSlug { get; set; }
+    public string TitleSlug { get; set; }
+    
+
 }

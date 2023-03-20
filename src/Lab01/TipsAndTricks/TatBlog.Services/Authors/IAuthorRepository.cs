@@ -13,7 +13,7 @@ public interface IAuthorRepository
 {
     //Câu 2. A : Tạo interface IAuthorRepository và lớp AuthorRepository. 
     //Câu 2. B : Tìm một tác giả theo mã số
-    Task<Author> GetAuthorByIdAsync(int Id, CancellationToken cancellationToken = default);
+    Task<Author> GetAuthorByIdAsync(int id, CancellationToken cancellationToken = default);
     //Câu 2. C : Tìm một tác giả theo tên định danh (slug). 
     Task<Author> GetAuthorByUrlSlugAsync(string Slug, CancellationToken cancellationToken = default);
     //Câu 2. D : Lấy và phân trang danh sách tác giả kèm theo số lượng bài viết của tác giả
@@ -35,4 +35,15 @@ public interface IAuthorRepository
     //Câu 2 bla ble
     Task<IList<AuthorItem>> GetAuthorsAsync(
         CancellationToken cancellationToken = default);
+
+
+
+    Task<bool> DeleteAuthorByIdAsync(
+            int id,
+            CancellationToken cancellationToken = default);
+
+    Task<IPagedList<AuthorItem>> GetPagedAuthorsAsync(
+            int pageNumber,
+            int pageSize,
+            CancellationToken cancellationToken = default);
 }

@@ -15,7 +15,8 @@ namespace TatBlog.WebApp.Mapsters
                 .Map(dest => dest.Tags, src => src.Tags.Select(x => x.Name));
 
             config.NewConfig<PostFilterModel, PostQuery>()
-                .Map(dest => dest.PublishedOnly, src => false);
+                .Map(dest => dest.PublishedOnly, src => !src.NotPublished)
+                .Map(dest => dest.NotPublished, src => src.NotPublished);
 
             config.NewConfig<PostEditModel, Post>()
                 .Ignore(dest => dest.Id)

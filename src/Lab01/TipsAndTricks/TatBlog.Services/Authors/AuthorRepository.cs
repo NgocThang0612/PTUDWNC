@@ -21,10 +21,12 @@ public class AuthorRepository : IAuthorRepository
         _context = context;
     }
     //Câu 2. B : Tìm một tác giả theo mã số
-    public async Task<Author> GetAuthorByIdAsync(int Id, CancellationToken cancellationToken = default)
+    public async Task<Author> GetAuthorByIdAsync(
+            int id,
+            CancellationToken cancellationToken = default)
     {
         return await _context.Set<Author>()
-            .Where(t => t.Id == Id)
+            .Where(p => p.Id == id)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
@@ -132,4 +134,43 @@ public class AuthorRepository : IAuthorRepository
     }
 
     
+
+    public async Task<bool> DeleteAuthorByIdAsync(
+            int id,
+            CancellationToken cancellationToken = default)
+    {
+        var author = await _context.Set<Author>().FindAsync(id);
+
+        if (author is null) return false;
+
+        _context.Set<Author>().Remove(author);
+        var rowsCount = await _context.SaveChangesAsync(cancellationToken);
+
+        return rowsCount > 0;
+    }
+
+    public async Task<IPagedList<AuthorItem>> GetPagedAuthorsAsync(
+            int pageNumber,
+            int pageSize,
+            CancellationToken cancellationToken = default)
+    {
+        var authorQuery = _context.Set<Author>()
+            .Select(x => new AuthorItem()
+            {
+                Id = x.Id,
+                FullName = x.FullName,
+                UrlSlug = x.UrlSlug,
+                ImageUrl = x.ImageUrl,
+                JoinedDate = x.JoinedDate,
+                Email = x.Email,
+                Notes = x.Notes,
+                PostCount = x.Posts.Count(p => p.Published)
+            });
+
+        return await authorQuery
+            .ToPagedListAsync(
+            pageNumber, pageSize,
+            nameof(Author.FullName), "DESC",
+            cancellationToken);
+    }
 }

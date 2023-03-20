@@ -49,12 +49,26 @@
     </div>
 
     <div class="col-auto">
-        <button type="submit" class="btn btn-primary">Tìm lọc</button>
+        <input type="checkbox" class="form-check-input" asp-for="NotPublished"/>
+        <label class="form-check-label" asp-for="NotPublished"></label>
+    </div>
+
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-primary" 
+        asp-area="Admin" 
+        asp-controller="Posts" 
+        asp-action="Filtrate">Tìm lọc</button>
         <a asp-area="Admin"
            asp-controller="Posts"
            asp-action="Edit"
-           class="btn btn-success">
+           class="btn btn-outline-secondary">
             Thêm mới
+        </a>
+         <a asp-area="Admin"
+           asp-controller="Posts"
+           asp-action="Index"
+           class="btn btn-outline-warning">
+            Bỏ lọc
         </a>
     </div>
 </form>

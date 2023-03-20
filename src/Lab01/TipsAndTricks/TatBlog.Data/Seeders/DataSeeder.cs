@@ -84,6 +84,87 @@ public class DataSeeder : IDataSeeder
                 Email = "nhatha05@motip.com",
                 JoinedDate = new DateTime(2018, 2, 17)
                 
+            },
+
+            new()
+            {
+                FullName = "ABC",
+                UrlSlug = "a-b-c",
+                Email = "abc01@gmail.com",
+                JoinedDate = new DateTime(2017, 3, 18)
+
+            },
+
+            new()
+            {
+                FullName = "BCA",
+                UrlSlug = "b-c-a",
+                Email = "bca02@yahoo.com",
+                JoinedDate = new DateTime(2016, 4, 19)
+
+            },
+
+            new()
+            {
+                FullName = "CBA",
+                UrlSlug = "c-b-a",
+                Email = "cba03@gmail.com",
+                JoinedDate = new DateTime(2015, 5, 15)
+
+            },
+
+            new()
+            {
+                FullName = "CAB",
+                UrlSlug = "c-a-b",
+                Email = "cab04@motip.com",
+                JoinedDate = new DateTime(2014, 6, 20)
+
+            },
+
+            new()
+            {
+                FullName = "NuocCam",
+                UrlSlug = "nuoc-cam",
+                Email = "nuoccam05@gmail.com",
+                JoinedDate = new DateTime(2023, 7, 21)
+
+            },
+
+            new()
+            {
+                FullName = "ComGa",
+                UrlSlug = "com-ga",
+                Email = "comga06@email.com",
+                JoinedDate = new DateTime(2022, 8, 22)
+
+            },
+
+            new()
+            {
+                FullName = "ComVit",
+                UrlSlug = "com-vit",
+                Email = "comvit07@motip.com",
+                JoinedDate = new DateTime(2021, 9, 23)
+
+            },
+
+            new()
+            {
+                FullName = "MeoMeo",
+                UrlSlug = "meo-meo",
+                Email = "meomeo08@yahoo.com",
+                JoinedDate = new DateTime(2020, 10, 24)
+
+            },
+
+            new()
+            {
+                FullName = "GauGau",
+                UrlSlug = "gau-gau",
+                Email = "gaugau09@gmail.com",
+                JoinedDate = new DateTime(2019, 11, 25)
+
             }
         };
 
@@ -266,7 +347,7 @@ public class DataSeeder : IDataSeeder
                 Meta = "Robert C.Martin",
                 UrlSlug = "clean-code",
                 Published = true,
-                PostedDate = new DateTime(2016, 12, 3, 12, 9, 12),
+                PostedDate = new DateTime(2016, 12, 3, 10, 9, 12),
                 ModifiedDate = null,
                 ViewCount = 5,
                 Author = authors[5],
@@ -274,6 +355,186 @@ public class DataSeeder : IDataSeeder
                 Tags = new List<Tag>()
                 {
                     tags[5]
+                }
+            },
+            new()
+            {
+                Title = "Nuoc cam ngon siu cap vip pro max",
+                ShortDescription = "Nuoc cam dinh cua choppppp ",
+                Description = "Nuoc cam Nuoc cam Nuoc cam Nuoc cam Nuoc cam Nuoc cam Nuoc cam Nuoc cam Nuoc cam Nuoc cam  ",
+                Meta = "Ver01",
+                UrlSlug = "nuoc-cam",
+                Published = true,
+                PostedDate = new DateTime(2017, 10, 4, 11, 10, 12),
+                ModifiedDate = null,
+                ViewCount = 6,
+                Author = authors[6],
+                Category = categories[6],
+                Tags = new List<Tag>()
+                {
+                    tags[6]
+                }
+            },
+            new()
+            {
+                Title = "Com ga ngon siu cap vip pro max",
+                ShortDescription = "Com ga VN dinh cua choppppp ",
+                Description = "Com ga Com ga Com ga Com ga Com ga Com ga Com ga Com ga Com ga Com ga Com ga Com ga Com ga Com ga Com ga",
+                Meta = "Ver02",
+                UrlSlug = "com-ga",
+                Published = true,
+                PostedDate = new DateTime(2018, 11, 5, 11, 11, 11),
+                ModifiedDate = null,
+                ViewCount = 7,
+                Author = authors[7],
+                Category = categories[7],
+                Tags = new List<Tag>()
+                {
+                    tags[7]
+                }
+            },
+            new()
+            {
+                Title = "Com vit ngon siu cap vip pro max",
+                ShortDescription = "Com vit VN dinh cua choppppp ",
+                Description = "Com vit Com vit Com vit Com vit Com vit Com vit Com vit Com vit Com vit Com vit Com vit Com vit Com vit Com vit Com vit Com vit Com vit Com vit",
+                Meta = "Ver03",
+                UrlSlug = "com-vit",
+                Published = true,
+                PostedDate = new DateTime(2019, 9, 6, 9, 12, 9),
+                ModifiedDate = null,
+                ViewCount = 8,
+                Author = authors[8],
+                Category = categories[8],
+                Tags = new List<Tag>()
+                {
+                    tags[8]
+                }
+            },
+            new()
+            {
+                Title = "Com tron ngon siu cap vip pro max",
+                ShortDescription = "Com tron VN dinh cua choppppp ",
+                Description = "Com tron Com tron Com tron Com tron Com tron Com tron Com tron Com tron Com tron Com tron Com tron Com tron Com tron Com tron Com tron Com tron Com tron Com tron Com tron Com tron Com tron Com tron Com tron Com tron Com tron ",
+                Meta = "Ver04",
+                UrlSlug = "com-tron",
+                Published = true,
+                PostedDate = new DateTime(2015, 8, 5, 8, 5, 8),
+                ModifiedDate = null,
+                ViewCount = 9,
+                Author = authors[9],
+                Category = categories[9],
+                Tags = new List<Tag>()
+                {
+                    tags[9]
+                }
+            },
+            new()
+            {
+                Title = "Con meo cute siu cap vip pro max",
+                ShortDescription = "Meo co VN dinh cua choppppp ",
+                Description = "Meo meo Meo meo Meo meo Meo meo Meo meo Meo meo Meo meo Meo meo Meo meo Meo meo Meo meo Meo meo Meo meo Meo meo Meo meo Meo meo Meo meo Meo meo ",
+                Meta = "Ver05",
+                UrlSlug = "meo-meo",
+                Published = true,
+                PostedDate = new DateTime(2020, 7, 7, 10, 11, 10),
+                ModifiedDate = null,
+                ViewCount = 10,
+                Author = authors[10],
+                Category = categories[5],
+                Tags = new List<Tag>()
+                {
+                    tags[10]
+                }
+            },
+            new()
+            {
+                Title = "Con cho cute siu cap vip pro max",
+                ShortDescription = "Cho co VN dinh cua choppppp ",
+                Description = "Gau gau Gau gau Gau gau Gau gau Gau gau Gau gauGau gau Gau gau Gau gau Gau gau Gau gau Gau gau Gau gau Gau gau Gau gau Gau gau Gau gau Gau gau Gau gau Gau gau",
+                Meta = "Ver06",
+                UrlSlug = "gau-gau",
+                Published = true,
+                PostedDate = new DateTime(2021, 6, 8, 1, 10, 1),
+                ModifiedDate = null,
+                ViewCount = 11,
+                Author = authors[11],
+                Category = categories[6],
+                Tags = new List<Tag>()
+                {
+                    tags[11]
+                }
+            },
+            new()
+            {
+                Title = "ABC",
+                ShortDescription = "ABCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+                Description = "ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC ABC  ",
+                Meta = "Ver07",
+                UrlSlug = "a-b-c",
+                Published = true,
+                PostedDate = new DateTime(2022, 3, 9, 10, 9, 18),
+                ModifiedDate = null,
+                ViewCount = 12,
+                Author = authors[12],
+                Category = categories[7],
+                Tags = new List<Tag>()
+                {
+                    tags[12]
+                }
+            },
+            new()
+            {
+                Title = "BCA",
+                ShortDescription = "BCAAAAAAAAAAAAAAAAAAAAAAAAA",
+                Description = "BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA BCA ",
+                Meta = "Ver08",
+                UrlSlug = "b-c-a",
+                Published = true,
+                PostedDate = new DateTime(2023, 2, 10, 10, 8, 17),
+                ModifiedDate = null,
+                ViewCount = 13,
+                Author = authors[13],
+                Category = categories[8],
+                Tags = new List<Tag>()
+                {
+                    tags[13]
+                }
+            },
+            new()
+            {
+                Title = "CAB",
+                ShortDescription = "CABBBBBBBBBBBBBBBBB",
+                Description = "CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB CAB  ",
+                Meta = "Ver09",
+                UrlSlug = "c-a-b",
+                Published = true,
+                PostedDate = new DateTime(2022, 1, 9, 10, 7, 15),
+                ModifiedDate = null,
+                ViewCount = 14,
+                Author = authors[14],
+                Category = categories[9],
+                Tags = new List<Tag>()
+                {
+                    tags[14]
+                }
+            },
+            new()
+            {
+                Title = "CBA",
+                ShortDescription = "CBAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                Description = "CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA CBA ",
+                Meta = "Ver10",
+                UrlSlug = "c-b-a",
+                Published = true,
+                PostedDate = new DateTime(2021, 4, 8, 5, 6, 14),
+                ModifiedDate = null,
+                ViewCount = 15,
+                Author = authors[14],
+                Category = categories[8],
+                Tags = new List<Tag>()
+                {
+                    tags[15]
                 }
             },
         };

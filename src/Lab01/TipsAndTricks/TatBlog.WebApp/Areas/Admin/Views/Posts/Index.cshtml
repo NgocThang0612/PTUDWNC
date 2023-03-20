@@ -1,15 +1,24 @@
 ﻿@using TatBlog.Core.Contracts;
 @using TatBlog.Core.Entities;
+@using TatBlog.Core.Constants;
 @model TatBlog.WebApp.Areas.Admin.Models.PostFilterModel
 @{
     ViewData["PageTitle"] = "Danh sách bài viết";
 
     var postsList = ViewBag.PostsList as IPagedList<Post>;
+    var stateList = new List<SelectListItem>
+    {
+        new SelectListItem("Co", "true"),
+        new SelectListItem("Khong", "false"),
+
+    };
 }
 
 <h1>
     Danh sách bài viết
 </h1>
+
+
 
 <!-- Hiển thị Form để tìm bài viết -->
 <partial name="_PostFilterPane" model="Model" />
@@ -49,12 +58,38 @@
                         @post.Category.Name
                     </td>
                     <td>
-                        @(post.Published ? "Có" : "Không")
+                         <a  asp-area="Admin"
+                             asp-controller="Posts"
+                             asp-action="TogglePublished"
+                             asp-route-id="@post.Id"
+                             class="btn btn-sm @(post.Published ? "btn-success" : "btn-danger")">
+                             @if (post.Published)
+                             {
+                                 <i class="fa fa-check"></i>
+                             }
+                             else
+                             {
+                                 <i class="fa fa-times"></i>
+                             }
+                         </a>
+                    </td>
+                    <td>
+                            <a asp-area="Admin"
+                                asp-controller="Posts" 
+                                asp-action="DeletePost"
+                                asp-route-id="@post.Id"
+                                onclick="return confirm ('Bạn có muốn xóa bài viết này không?');"
+                                class="btn btn-outline-danger">
+                            Xóa
+                            </a>
+                        
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+
+    <partial name="_Pager" model="@postsList" />
 }
 else
 {
@@ -62,4 +97,6 @@ else
         Không tìm thấy bài viết nào
     </h1>
 }
+
+
 
