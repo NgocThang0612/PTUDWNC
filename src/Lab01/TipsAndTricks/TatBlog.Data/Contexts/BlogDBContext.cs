@@ -21,10 +21,14 @@ public class BlogDBContext : DbContext
 
     public DbSet<Subscriber> Subscribers { get; set; }
 
+    public DbSet<Comment> Comments { get; set; }
+
+
+
     public BlogDBContext(DbContextOptions<BlogDBContext> options)
             : base(options)
     {
-        
+
     }
 
     public BlogDBContext() { }

@@ -1,0 +1,56 @@
+﻿@model Comment
+@{
+    IList<Comment> commentsList = ViewBag.CommentsList;
+}
+
+<div class="container">
+    <div class="row bootstrap snippets bootdeys">
+        <div class="col-md-8 col-sm-12">
+            <div class="comment-wrapper">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        Comment panel
+                    </div>
+                    <form asp-area=""
+                          asp-controller="Blog"
+                          asp-action="Comments"
+                          enctype="multipart/form-data"
+                          method="post"
+                          class="panel-body">
+                        <input type="hidden" asp-for="PostId" />
+                        <div class="mb-3 col">
+                            <input asp-for="FullName" type="text" class="form-control" id="comment-fullname" placeholder="Họ và tên">
+                        </div>
+                        <textarea asp-for="Description" class="form-control" placeholder="Viết bình luận..." rows="3"></textarea>
+                        <br>
+                        <button type="submit" class="btn btn-info pull-right">Đăng</button>
+                        <div class="clearfix"></div>
+                        <hr>
+                        <ul class="media-list">
+                            @foreach (var item in commentsList)
+                            {
+                                @if(item.Approved)
+                                {
+                                    <li class="media">
+                                        <a href="#" class="pull-left">
+                                            <img src="~/images/pic2.jpg" alt="" class="img-circle">
+                                        </a>
+                                        <div class="media-body">
+                                            <span class="text-muted pull-right">
+                                                <small class="text-muted">@item.JoinedDate</small>
+                                            </span>
+                                            <strong class="text-success">@item.FullName</strong>
+                                            <p>
+                                                @item.Description
+                                            </p>
+                                        </div>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
+using FluentValidation.AspNetCore;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
+using TatBlog.Core.Entities;
 using TatBlog.Services.Authors;
 using TatBlog.Services.Blogs;
 using TatBlog.Services.Media;
@@ -67,5 +69,68 @@ public class AuthorsController : Controller
             : _mapper.Map<AuthorEditModel>(author);
 
         return View(model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(
+       [FromServices] IValidator<AuthorEditModel> authorValidator,
+       AuthorEditModel model)
+    {
+        var validationResult = await authorValidator.ValidateAsync(model);
+
+        if (!validationResult.IsValid)
+        {
+            validationResult.AddToModelState(ModelState);
+        }
+
+   
+        var author = model.Id > 0
+            ? await _authorRepository.GetAuthorByIdAsync(model.Id)
+            : null;
+
+        if (author == null)
+        {
+            author = _mapper.Map<Author>(model);
+
+            author.Id = 0;
+            author.JoinedDate = DateTime.Now;
+        }
+        else
+        {
+            _mapper.Map(model, author);
+        }
+
+        //Nếu người dùng có upload hình ảnh minh họa cho bài viết
+        if (model.ImageFile?.Length > 0)
+        {
+            // Thì thực hiện việc lưu tập tin vào thư  mục uploads
+            var newImagePath = await _mediaManager.SaveFileAsync(
+                model.ImageFile.OpenReadStream(),
+                model.ImageFile.FileName,
+                model.ImageFile.ContentType);
+
+            // Nếu lưu thành công, xóa tập tin hình ảnh cũ (nếu có)
+            if (!string.IsNullOrWhiteSpace(newImagePath))
+            {
+                await _mediaManager.DeleteFileAsync(author.ImageUrl);
+                author.ImageUrl = newImagePath;
+            }
+        }
+
+        await _authorRepository.AddAuthorAsync(author);
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> VerifyAuthorSlug(
+       int id, string urlSlug)
+    {
+        var slugExisted = await _authorRepository
+            .IsAuthorSlugExistedAsync(id, urlSlug);
+
+        return slugExisted
+            ? Json($"Slug '{urlSlug}' đã được sử dụng")
+            : Json(true);
     }
 }

@@ -1,7 +1,101 @@
-﻿@{
-    ViewData["PageTitle"] = "Bảng điều khiển";
+﻿@using TatBlog.Core.Contracts;
+@using TatBlog.Core.Entities;
+@using TatBlog.Core.Constants;
+@model IPagedList<Comment>
+@{
+    ViewData["PageTitle"] = "Danh sách bình luận";
+    var commentsList = Model;
+    var stateList = new List<SelectListItem>
+    {
+        new SelectListItem("Co", "true"),
+        new SelectListItem("Khong", "false"),
+
+    };
 }
 
 <h1>
     Danh sách bình luận
 </h1>
+
+
+@if (commentsList != null && commentsList.Count > 0)
+{
+    <table class="table table-responsive table-striped">
+        <thead>
+            <tr>
+                <th>Người bình luận</th>
+                <th>Nội dung</th>
+                <th>Ngày bình luận</th>
+                <th>Trạng thái</th>
+                <th>Xóa bình luận</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var comment in commentsList)
+            {
+                <tr>
+                    <td>
+                        <a asp-area="Admin"
+                   asp-controller="Comments"
+                   asp-action="Edit"
+                   asp-route-id="@comment.Id"
+                   class="text-bold">
+                            @comment.FullName
+                        </a>
+
+                    </td>
+
+                    <td>
+                        <p class="text-muted">
+                            @comment.Description
+                        </p>
+                    </td>
+
+                    <td>
+                        <p class="text-muted">
+                            @comment.JoinedDate
+                        </p>
+                    </td>
+                    
+                    <td>
+                        <a asp-area="Admin"
+                   asp-controller="Comments"
+                   asp-action="ToggleApproved"
+                   asp-route-id="@comment.Id"
+                   class="btn btn-sm @(comment.Approved ? "btn-success" : "btn-danger")">
+                            @if (comment.Approved)
+                            {
+                                <i class="fa fa-check"></i>
+                            }
+                            else
+                            {
+                                <i class="fa fa-times"></i>
+                            }
+                        </a>
+                    </td>
+                    <td>
+                        <a asp-area="Admin"
+                   asp-controller="Comments"
+                   asp-action="DeleteComment"
+                   asp-route-id="@comment.Id"
+                   onclick="return confirm ('Bạn có muốn xóa bình luận này không?');"
+                   class="btn btn-outline-danger">
+                            Xóa
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <partial name="_Pager" model="@commentsList" />
+}
+else
+{
+    <h1 class="text-danger">
+        Không tìm thấy bình luận nào
+    </h1>
+}
+
+
+

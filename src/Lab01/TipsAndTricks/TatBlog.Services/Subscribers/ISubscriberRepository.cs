@@ -10,6 +10,11 @@ namespace TatBlog.Services.Subscribers
 {
     public interface ISubscriberRepository
     {
+        Task<int> NumberOfFollowerAsync(
+            CancellationToken cancellationToken = default);
+        Task<int> NumberOfFollowerTodayAsync(
+           CancellationToken cancellationToken = default);
+
         Task<bool> IsExistedEmail(
             string email,
             CancellationToken cancellationToken = default);
@@ -17,7 +22,7 @@ namespace TatBlog.Services.Subscribers
 
         // e.Định nghĩa các phương thức để thực hiện các công việc sau:
         // Đăng ký theo dõi: SubscribeAsync(email)
-        Task SubscribeAsync(
+        Task<bool> SubscribeAsync(
             string email,
             CancellationToken cancellationToken = default);
 
@@ -53,6 +58,14 @@ namespace TatBlog.Services.Subscribers
         // Tìm danh sách người theo dõi theo nhiều tiêu chí khác nhau, kết quả được phân trang: Task<IPagedList<Subscriber>>SearchSubscribersAsync(pagingParams, keyword, unsubscribed, involuntary). 
         Task<IPagedList<Subscriber>> SearchSubscribersAsync(
             IPagingParams pagingParams,
+            CancellationToken cancellationToken = default);
+        Task<IPagedList<Subscriber>> GetPagedSubscribersAsync(
+            int pageNumber = 1,
+            int pageSize = 10,
+            CancellationToken cancellationToken = default);
+
+        Task UpdateSubscriberAsync(
+            Subscriber subscriber,
             CancellationToken cancellationToken = default);
     }
 }

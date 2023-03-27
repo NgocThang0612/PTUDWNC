@@ -73,6 +73,7 @@ public interface IBlogRepository
     //Câu 1.F : Tìm một chuyên mục theo mã số cho trước
     Task<Category> GetCategoryByIdAsync(int id, bool p = true, CancellationToken cancellationToken = default);
 
+    Task<Comment> GetCommentByIdAsync(int id, bool p = true, CancellationToken cancellationToken = default);
     //Câu 1.G : Thêm hoặc cập nhật một chuyên mục/chủ đề
     Task AddCategoryAsync(
         Category category,
@@ -80,6 +81,8 @@ public interface IBlogRepository
 
     //Câu 1.H : Xóa một chuyên mục theo mã số cho trước
     Task<bool> DeleteCategoryByIdAsync(int id, CancellationToken cancellationToken = default);
+
+    Task<bool> DeleteCommentByIdAsync(int id, CancellationToken cancellationToken = default);
 
     // Xóa post
     Task <bool> DeletePostByIdAsync(
@@ -101,6 +104,15 @@ public interface IBlogRepository
             int pageSize = 10,
             CancellationToken cancellationToken = default);
     Task<IPagedList<CategoryItem>> GetPagedCategoryAsync(
+        IPagingParams pagingParams,
+        CancellationToken cancellationToken = default);
+
+    Task<IPagedList<Comment>> GetPagedCommentAsync(
+
+            int pageNumber = 1,
+            int pageSize = 10,
+            CancellationToken cancellationToken = default);
+    Task<IPagedList<Comment>> GetPagedCommentAsync(
         IPagingParams pagingParams,
         CancellationToken cancellationToken = default);
 
@@ -165,9 +177,43 @@ public interface IBlogRepository
             int id = 0,
             CancellationToken cancellationToken = default);
 
+    //Chuyển đổi Comment
+    Task<bool> ToggleApprovedAsync(
+            int id = 0,
+            CancellationToken cancellationToken = default);
+
     //
     Task<Category> CreateOrUpdateCategoryAsync(
         Category category, CancellationToken cancellationToken = default);
+
+    Task<Comment> CreateCommentAsync(
+        Comment comment, CancellationToken cancellationToken = default);
+
+    Task<Comment> CreateOrUpdateCommentAsync(
+        Comment comment, CancellationToken cancellationToken = default);
+
+    Task<IPagedList<TagItem>> GetPagedTagsAsync(
+
+            int pageNumber = 1,
+            int pageSize = 5,
+            CancellationToken cancellationToken = default);
+    Task<IPagedList<TagItem>> GetPagedTagsAsync(
+        IPagingParams pagingParams, CancellationToken cancellationToken = default);
+
+    Task<bool> CreateOrUpdateTagAsync(
+        Tag tag, CancellationToken cancellationToken = default);
+
+    Task<Tag> GetTagByIdAsync(int id, CancellationToken cancellationToken = default);
+
+    Task<int> TotalPosts(CancellationToken cancellationToken = default);
+
+    Task<int> PostsUnpublished(CancellationToken cancellationToken = default);
+
+    Task<int> NumberOfCategories(CancellationToken cancellationToken = default);
+
+    
+
+    Task<int> NumberOfComments(CancellationToken cancellationToken = default);
     #endregion
     #region
 

@@ -38,7 +38,8 @@ public class BlogRepository : IBlogRepository
         IQueryable<Post> postsQuery = _context.Set<Post>()
         .Include(x => x.Category)
         .Include(x => x.Tags)
-        .Include(x => x.Author);
+        .Include(x => x.Author)
+        .Include(x => x.Comments);
 
         if (year > 0)
         {
@@ -125,22 +126,7 @@ public class BlogRepository : IBlogRepository
 
     //// Lấy danh sách từ khóa/thẻ và phân trang theo
     //// các tham số pagingParams
-    //public async Task<IPagedList<TagItem>> GetPagedTagsAsync(
-    //    IPagingParams pagingParams,
-    //    CancellationToken cancellationToken = default)
-    //{
-    //    var tagQuery = _context.Set<Tag>()
-    //        .Select(x => new TagItem()
-    //        {
-    //            Id = x.Id,
-    //            Name = x.Name,
-    //            UrlSlug = x.UrlSlug,
-    //            Description = x.Description,
-    //            PostCount = x.Posts.Count(p => p.Published)
-    //        });
-    //    return await tagQuery
-    //        .ToPagedListAsync(pagingParams, cancellationToken);
-    //}
+
     #endregion
     #region
     // C. Bài tập thực hành
@@ -168,7 +154,7 @@ public class BlogRepository : IBlogRepository
                 Description = x.Description,
                 PostCount = x.Posts.Count(p => p.Published)
             });
-            return await query.ToListAsync(cancellationToken);
+        return await query.ToListAsync(cancellationToken);
     }
 
     //Câu 1.D : Xóa một thẻ theo mã cho trước
@@ -177,7 +163,7 @@ public class BlogRepository : IBlogRepository
         await _context.Database
                .ExecuteSqlRawAsync("DELETE FROM PostTag WHERE TagsId = " + TagId, cancellationtoken);
         await _context.Set<Tag>()
-            .Where (x => x.Id == TagId)
+            .Where(x => x.Id == TagId)
             .ExecuteDeleteAsync(cancellationtoken);
     }
 
@@ -197,14 +183,21 @@ public class BlogRepository : IBlogRepository
            .FirstOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<Comment> GetCommentByIdAsync(int id, bool p = true, CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<Comment>()
+           .Where(x => x.Id == id)
+           .FirstOrDefaultAsync(cancellationToken);
+    }
+
     //Câu 1.G : Thêm hoặc cập nhật một chuyên mục/chủ đề
     public async Task AddCategoryAsync(Category category, CancellationToken cancellationToken = default)
     {
         //  tim danh sach cua category truoc viet trong if 
         // tìm id, tiep theo dùng .ExecuteUpdateAsync để cập nhật
-       
+
         if (IsExitedCategoryBySlugAsync(category.Id, category.UrlSlug).Result)
-        Console.WriteLine("Error: Exsited Slug");
+            Console.WriteLine("Error: Exsited Slug");
         else
 
                 if (category.Id > 0) // true: update || false: add
@@ -238,8 +231,20 @@ public class BlogRepository : IBlogRepository
         return rowsCount > 0;
     }
 
+    public async Task<bool> DeleteCommentByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var comment = await _context.Set<Comment>().FindAsync(id);
+
+        if (comment is null) return false;
+
+        _context.Set<Comment>().Remove(comment);
+        var rowsCount = await _context.SaveChangesAsync(cancellationToken);
+
+        return rowsCount > 0;
+    }
+
     // Xóa post
-    public async Task<bool>DeletePostByIdAsync(int postId, CancellationToken cancellationToken = default)
+    public async Task<bool> DeletePostByIdAsync(int postId, CancellationToken cancellationToken = default)
     {
         var post = await _context.Set<Post>().FindAsync(postId);
 
@@ -295,7 +300,7 @@ public class BlogRepository : IBlogRepository
                 cancellationToken);
     }
     public async Task<IPagedList<CategoryItem>> GetPagedCategoryAsync(
-        IPagingParams pagingParams, 
+        IPagingParams pagingParams,
         CancellationToken cancellationToken = default)
     {
         var categoryQuery = _context.Set<Category>()
@@ -309,6 +314,30 @@ public class BlogRepository : IBlogRepository
                 ShowOnMenu = x.ShowOnMenu,
             });
         return await categoryQuery
+            .ToPagedListAsync(pagingParams, cancellationToken);
+    }
+
+    public async Task<IPagedList<Comment>> GetPagedCommentAsync(
+            int pageNumber = 1,
+            int pageSize = 10,
+            CancellationToken cancellationToken = default)
+    {
+        var commentQuery = _context.Set<Comment>();
+
+        return await commentQuery
+            .ToPagedListAsync(
+                pageNumber, pageSize,
+                nameof(Comment.FullName), "DESC",
+                cancellationToken);
+    }
+    public async Task<IPagedList<Comment>> GetPagedCommentAsync(
+        IPagingParams pagingParams,
+        CancellationToken cancellationToken = default)
+    {
+        var commentQuery = _context.Set<Comment>();
+
+
+        return await commentQuery
             .ToPagedListAsync(pagingParams, cancellationToken);
     }
 
@@ -337,7 +366,7 @@ public class BlogRepository : IBlogRepository
         if (!details)
         {
             return await _context.Set<Post>().FindAsync(id);
-        }    
+        }
         return await _context.Set<Post>()
             .Include(x => x.Category)
             .Include(x => x.Author)
@@ -438,7 +467,7 @@ public class BlogRepository : IBlogRepository
 
     //Câu 1 . S : Tìm và phân trang các bài viết thỏa mãn điều kiện tìm kiếm được cho trong
     //đối tượng PostQuery(kết quả trả về kiểu IPagedList<Post>)
-    public async Task<IPagedList<Post>> GetPagedPostsAsync(PostQuery pq, IPagingParams pagingParams,  CancellationToken cancellationToken = default)
+    public async Task<IPagedList<Post>> GetPagedPostsAsync(PostQuery pq, IPagingParams pagingParams, CancellationToken cancellationToken = default)
     {
         return await FilterPost(pq)
                 .ToPagedListAsync(pagingParams, cancellationToken);
@@ -504,6 +533,22 @@ public class BlogRepository : IBlogRepository
         return !category.ShowOnMenu;
     }
 
+    public async Task<bool> ToggleApprovedAsync(
+            int id = 0,
+            CancellationToken cancellationToken = default)
+    {
+        var comment = await _context.Set<Comment>().FindAsync(id);
+
+        if (comment is null) return false;
+
+        await _context.Set<Comment>()
+            .Where(c => c.Id == id)
+            .ExecuteUpdateAsync(c => c
+                .SetProperty(c => c.Approved, c => !c.Approved),
+            cancellationToken);
+        return !comment.Approved;
+    }
+
     //
     public async Task<Category> CreateOrUpdateCategoryAsync(
         Category category, CancellationToken cancellationToken = default)
@@ -521,6 +566,123 @@ public class BlogRepository : IBlogRepository
 
         return category;
     }
+
+    //
+    public async Task<Comment> CreateCommentAsync(
+        Comment comment, CancellationToken cancellationToken = default)
+    {
+        if (comment.PostId > 0)
+            _context.Set<Comment>().Add(comment);
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return comment;
+    }
+
+    public async Task<Comment> CreateOrUpdateCommentAsync(
+        Comment comment, CancellationToken cancellationToken = default)
+    {
+        if (comment.Id > 0)
+        {
+            _context.Set<Comment>().Update(comment);
+        }
+        else
+        {
+            _context.Set<Comment>().Add(comment);
+        }
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return comment;
+    }
+
+
+    public async Task<IPagedList<TagItem>> GetPagedTagsAsync(
+            int pageNumber = 1,
+            int pageSize = 5,
+            CancellationToken cancellationToken = default)
+    {
+        var tagQuery = _context.Set<Tag>()
+            .Select(x => new TagItem()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                UrlSlug = x.UrlSlug,
+                Description = x.Description,
+                PostCount = x.Posts.Count(p => p.Published),
+            });
+        return await tagQuery
+            .ToPagedListAsync(
+                pageNumber, pageSize,
+                nameof(Tag.Name), "DESC",
+                cancellationToken);
+    }
+    public async Task<IPagedList<TagItem>> GetPagedTagsAsync(
+        IPagingParams pagingParams, CancellationToken cancellationToken = default)
+    {
+        var tagQuery = _context.Set<Tag>()
+            .OrderBy(x => x.Name)
+            .Select(x => new TagItem()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                UrlSlug = x.UrlSlug,
+                Description = x.Description,
+                PostCount = x.Posts.Count(p => p.Published)
+            });
+
+        return await tagQuery.ToPagedListAsync(pagingParams, cancellationToken);
+    }
+
+    public async Task<bool> CreateOrUpdateTagAsync(
+        Tag tag, CancellationToken cancellationToken = default)
+    {
+        if (tag.Id > 0)
+        {
+            _context.Set<Tag>().Update(tag);
+        }
+        else
+        {
+            _context.Set<Tag>().Add(tag);
+        }
+
+        return await _context.SaveChangesAsync(cancellationToken) > 0;
+    }
+
+    public async Task<Tag> GetTagByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<Tag>()
+           .Where(x => x.Id == id)
+           .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<int> TotalPosts(CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<Post>()
+            .CountAsync(cancellationToken);
+    }
+
+    public async Task<int> PostsUnpublished(CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<Post>()
+            .CountAsync(x => !x.Published, cancellationToken);
+    }
+
+    public async Task<int> NumberOfCategories(CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<Category>()
+            .CountAsync(cancellationToken);
+    }
+
+
+    public async Task<int> NumberOfComments(CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<Comment>()
+            .CountAsync(cancellationToken);
+    }
+
+    
+
     #endregion
 
     #region

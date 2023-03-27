@@ -67,31 +67,20 @@ public class AuthorRepository : IAuthorRepository
             .AnyAsync(x => x.Id != id && x.UrlSlug == slug,
             cancellationToken);
     }
-    public async Task AddAuthorAsync(Author author, CancellationToken cancellationToken = default)
+    public async Task<Author> AddAuthorAsync(Author author, CancellationToken cancellationToken = default)
     {
-        if (IsAuthorSlugExistedAsync(author.Id, author.UrlSlug).Result)
-            Console.WriteLine("Error: Exsited Slug");
+        if (author.Id > 0)
+        {
+            _context.Set<Author>().Update(author);
+        }
         else
+        {
+            _context.Set<Author>().Add(author);
+        }
 
-                if (author.Id > 0) // true: update || false: add
-        {
-            await _context.Set<Author>()
-                  .Where(x => x.Id == author.Id)
-                  .ExecuteUpdateAsync(c => c
-                    .SetProperty(x => x.FullName, author.FullName)
-                    .SetProperty(x => x.UrlSlug, author.UrlSlug)
-                    .SetProperty(x => x.ImageUrl, author.ImageUrl)
-                    .SetProperty(x => x.JoinedDate, author.JoinedDate)
-                    .SetProperty(x => x.Email, author.Email)
-                    .SetProperty(x => x.Notes, author.Notes)
-                  .SetProperty(x => x.Posts, author.Posts),
-                     cancellationToken);
-        }
-        else
-        {
-            _context.Authors.AddRange(author);
-            _context.SaveChanges();
-        }
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return author;
     }
 
     //Câu 2. F : Tìm danh sách N tác giả có nhiều bài viết nhất. N là tham số đầu vào.
@@ -172,5 +161,11 @@ public class AuthorRepository : IAuthorRepository
             pageNumber, pageSize,
             nameof(Author.FullName), "DESC",
             cancellationToken);
+    }
+
+    public async Task<int> NumberOfAuthors(CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<Author>()
+            .CountAsync(cancellationToken);
     }
 }

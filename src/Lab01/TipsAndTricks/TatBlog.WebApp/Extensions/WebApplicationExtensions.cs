@@ -6,6 +6,7 @@ using TatBlog.Data.Seeders;
 using TatBlog.Services.Authors;
 using TatBlog.Services.Blogs;
 using TatBlog.Services.Media;
+using TatBlog.Services.Subscribers;
 using TatBlog.WebApp.Middlewares;
 
 namespace TatBlog.WebApp.Extensions
@@ -44,6 +45,7 @@ namespace TatBlog.WebApp.Extensions
             buider.Services.AddScoped<IMediaManager, LocalFileSystemMediaManager>();
             buider.Services.AddScoped<IAuthorRepository, AuthorRepository>();
             buider.Services.AddScoped<IBlogRepository, BlogRepository>();
+            buider.Services.AddScoped<ISubscriberRepository, SubscriberRepository>();
             buider.Services.AddScoped<IDataSeeder, DataSeeder>();
 
 

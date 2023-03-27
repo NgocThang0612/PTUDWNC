@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TatBlog.Core.Contracts;
 using TatBlog.Core.Entities;
 using TatBlog.Data.Contexts;
+using TatBlog.Services.Extensions;
 
 namespace TatBlog.Services.Subscribers
 {
@@ -19,7 +20,7 @@ namespace TatBlog.Services.Subscribers
             _context = context;
         }
 
-        public async Task SubscribeAsync(
+        public async Task<bool> SubscribeAsync(
             string email,
             CancellationToken cancellationToken = default)
         {
@@ -31,10 +32,10 @@ namespace TatBlog.Services.Subscribers
                     SubscribeDate = DateTime.Now,
                 };
                 _context.Subscribers.Add(s);
-                _context.SaveChanges();
+                return await _context.SaveChangesAsync(cancellationToken) > 0;
             }
             else
-                Console.WriteLine("Error: Email existed");
+                return false;
         }
 
         public async Task UnsubscribeAsync(
@@ -109,12 +110,56 @@ namespace TatBlog.Services.Subscribers
             throw new NotImplementedException();
         }
 
+        public async Task<int> NumberOfFollowerAsync(
+            CancellationToken cancellationToken = default)
+        {
+            return await _context.Set<Subscriber>()
+                .CountAsync(cancellationToken);
+        }
+
+        public async Task<int> NumberOfFollowerTodayAsync(
+            CancellationToken cancellationToken = default)
+        {
+            string now = DateTime.Now.ToShortDateString();
+            var list = _context.Set<Subscriber>();
+            return await list
+                .CountAsync(x => x.SubscribeDate.Day == DateTime.Now.Day &&
+                    x.SubscribeDate.Month == DateTime.Now.Month &&
+                    x.SubscribeDate.Year == DateTime.Now.Year,
+                cancellationToken);
+        }
+
         public async Task<bool> IsExistedEmail(
             string email,
             CancellationToken cancellationToken = default)
         {
             return await _context.Set<Subscriber>()
                 .AnyAsync(s => s.Email.Equals(email), cancellationToken);
+        }
+
+        public async Task<IPagedList<Subscriber>> GetPagedSubscribersAsync(
+            int pageNumber = 1,
+            int pageSize = 10,
+            CancellationToken cancellationToken = default)
+        {
+            return await _context.Set<Subscriber>()
+                .ToPagedListAsync(
+                pageNumber, pageSize,
+                nameof(Subscriber.Email), "DESC", 
+                cancellationToken);
+        }
+
+        public async Task UpdateSubscriberAsync(
+            Subscriber subscriber,
+            CancellationToken cancellationToken = default)
+        {
+            if (subscriber.Id > 0)
+            {
+                _context.Set<Subscriber>().Update(subscriber);
+            }
+            
+            await _context.SaveChangesAsync(cancellationToken);
+
         }
     }
 }

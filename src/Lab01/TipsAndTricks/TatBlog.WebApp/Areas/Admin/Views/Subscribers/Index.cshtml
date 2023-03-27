@@ -1,7 +1,107 @@
-﻿@{
-    ViewData["PageTitle"] = "Bảng điều khiển";
+﻿@using TatBlog.Core.Contracts;
+@using TatBlog.Core.Entities;
+@using TatBlog.Core.Constants;
+@model IPagedList<Subscriber>
+@{
+    ViewData["PageTitle"] = "Danh sách đăng ký";
+    var subscribersList = Model;
+    var stateList = new List<SelectListItem>
+    {
+        new SelectListItem("Co", "true"),
+        new SelectListItem("Khong", "false"),
+
+    };
 }
 
 <h1>
-    Danh sách người theo dõi
+    Danh sách đăng ký
 </h1>
+
+
+
+@if (subscribersList != null && subscribersList.Count > 0)
+{
+    <table class="table table-responsive table-striped">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Ngày đăng ký</th>
+                <th>Trạng thái</th>
+                <th>Ngày hủy đăng ký</th>
+                <th>Lý do hủy</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var subscriber in subscribersList)
+            {
+                <tr>
+                    <td>
+                        <a asp-area="Admin"
+                   asp-controller="Subcribers"
+                   asp-action="Edit"
+                   asp-route-id="@subscriber.Id"
+                   class="text-bold">
+                            @subscriber.Email
+                        </a>
+
+                        <p class="text-muted">
+                            @subscriber.Notes
+                        </p>
+                    </td>
+                    <td>
+                        @subscriber.SubscribeDate
+                    </td>
+                    <td>
+                        <a asp-area="Admin"
+                   asp-controller="Subscribers"
+                   asp-action="Edit"
+                   asp-route-id="@subscriber.Id" 
+                   class="btn btn-sm @(subscriber.Voluntary==null ? "btn-success" : (subscriber.Voluntary == true) ? "btn-secondary" : "btn-danger")">
+                            @if (subscriber.Voluntary==true)
+                            {
+                                <i class="fa fa-times" title="Đã hủy đăng Ký"></i>
+                            }
+                            else if (subscriber.Voluntary == false)
+                            {
+                                <i class="fa fa-ban" title="Bị chặn"></i>
+                            }
+                            else
+                            {
+                                <i class="fa fa-check" title="Đang đăng ký"></i>
+                            }
+                        </a>
+                    </td>
+                    <td>
+                        @subscriber.UnsubscribeDate
+                    </td>
+                    <td>
+                        @subscriber.ResonUnsubscribe
+                    </td>
+                    <td>
+                    
+                    <td>
+                        <a asp-area="Admin"
+                   asp-controller="Subcribers"
+                   asp-action="DeleteSubcriber"
+                   asp-route-id="@subscriber.Id"
+                   onclick="return confirm ('Bạn có muốn xóa chủ đề này không?');"
+                   class="btn btn-outline-danger">
+                            Xóa
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <partial name="_Pager" model="@subscribersList" />
+}
+else
+{
+    <h1 class="text-danger">
+        Không tìm thấy đăng ký nào
+    </h1>
+}
+
+
+

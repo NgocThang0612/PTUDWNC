@@ -1,7 +1,47 @@
-﻿@{
-    ViewData["PageTitle"] = "Bảng điều khiển";
-}
-
-<h1>
-    Đây là khu vực dành cho người quản trị
-</h1>
+﻿<div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
+    <div class="card-header">Tổng số bài viết</div>
+    <div class="card-body">
+        <h5 class="card-title">@ViewBag.TotalPosts</h5>
+    </div>
+</div>
+<div class="card text-white bg-secondary mb-3" style="max-width: 18rem;">
+    <div class="card-header">Số bài viết chưa xuất bản</div>
+    <div class="card-body">
+        <h5 class="card-title">@ViewBag.PostsUnpublished</h5>
+        
+    </div>
+</div>
+<div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+    <div class="card-header">Số lượng chủ đề</div>
+    <div class="card-body">
+        <h5 class="card-title">@ViewBag.NumberOfCategories</h5>
+        
+    </div>
+</div>
+<div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+    <div class="card-header">Số lượng tác giả</div>
+    <div class="card-body">
+        <h5 class="card-title">@ViewBag.NumberOfAuthors</h5>
+       
+    </div>
+</div>
+<div class="card text-white bg-warning mb-3" style="max-width: 18rem;">
+    <div class="card-header">Số lượng bình luận đang chờ phê duyệt</div>
+    <div class="card-body">
+        <h5 class="card-title">@ViewBag.NumberOfComments</h5>
+        
+    </div>
+</div>
+<div class="card text-white bg-info mb-3" style="max-width: 18rem;">
+    <div class="card-header">Số lượng người theo dõi</div>
+    <div class="card-body">
+        <h5 class="card-title">@ViewBag.NumberOfFollower</h5>
+        
+    </div>
+</div>
+<div class="card bg-light mb-3" style="max-width: 18rem;">
+    <div class="card-header">Số lượng người mới theo dõi trong ngày</div>
+    <div class="card-body">
+        <h5 class="card-title">@ViewBag.NumberOfFollowerToDay</h5>
+    </div>
+</div>

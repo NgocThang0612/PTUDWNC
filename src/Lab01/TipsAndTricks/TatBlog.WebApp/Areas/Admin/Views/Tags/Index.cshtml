@@ -1,17 +1,11 @@
 ﻿@using TatBlog.Core.Contracts;
 @using TatBlog.Core.Entities;
 @using TatBlog.Core.Constants;
-@*@model TatBlog.WebApp.Areas.Admin.Models.TagsFilterModel;*@
 @model IPagedList<TagItem>
 @{
     ViewData["PageTitle"] = "Danh sách thẻ";
     var tagsList = Model;
-    var stateList = new List<SelectListItem>
-    {
-        new SelectListItem("Co", "true"),
-        new SelectListItem("Khong", "false"),
-
-    };
+    
 }
 
 <h1>
@@ -29,8 +23,9 @@
         <thead>
             <tr>
                 <th>Tên thẻ</th>
-                <th>Số thẻ</th>
+                <th>Số bài viết</th>
                 <th>Nội dung</th>
+                <th>Xóa thẻ</th>
             </tr>
         </thead>
         <tbody>
@@ -46,12 +41,26 @@
                             @tag.Name
                         </a>
 
+                    </td>
+                    <td>
+                        @tag.PostCount
+                    </td>
+
+                    <td>
                         <p class="text-muted">
                             @tag.Description
                         </p>
                     </td>
+                    
                     <td>
-                        @tag.PostCount
+                        <a asp-area="Admin"
+                   asp-controller="Tags"
+                   asp-action="DeleteTag"
+                   asp-route-id="@tag.Id"
+                   onclick="return confirm ('Bạn có muốn xóa thẻ này không?');"
+                   class="btn btn-outline-danger">
+                            Xóa
+                        </a>
                     </td>
                 </tr>
             }

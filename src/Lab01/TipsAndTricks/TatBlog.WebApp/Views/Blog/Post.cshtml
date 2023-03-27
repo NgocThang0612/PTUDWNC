@@ -6,15 +6,35 @@
     ViewData["PageTitle"] = "Xem chi tiết";
 
     var postQuery = (ViewBag.PostQuery as PostQuery) ?? new PostQuery();
+
+    Comment cmt = new Comment();
+    cmt.PostId = Model.Id;
 }
 
-<div class="p-4">
-    @if (!string.IsNullOrWhiteSpace(postQuery.Keyword))
-    {
-        <h3 class="text-primary mb-3">
-            Những bài viết chứa từ khóa '@postQuery.Keyword'
-        </h3>
+<style>
+    
+    .comment-wrapper .panel-body {
+        max-height: 650px;
+        overflow: auto;
     }
-    <partial name="_PostList" model="@Model" />
 
+    .comment-wrapper .media-list .media img {
+        width: 64px;
+        height: 64px;
+        border: 2px solid #e5e7e8;
+    }
+
+    .comment-wrapper .media-list .media {
+        border-bottom: 1px dashed #efefef;
+        margin-bottom: 25px;
+    }
+</style>
+<div class="p-4">
+   <article class="blog-posts">
+
+       <h2> @Model.Title </h2>
+       <p> @Model.ShortDescription</p>
+       <hr> <p>@Model.Description</p>
+   </article>
+    <partial name="_Comments" model="cmt"></partial>
 </div>

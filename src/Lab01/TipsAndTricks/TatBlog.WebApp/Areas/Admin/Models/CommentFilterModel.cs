@@ -4,10 +4,6 @@ using System.Globalization;
 
 namespace TatBlog.WebApp.Areas.Admin.Models;
 
-public class TagFilterModel
+public class CommentFilterModel
 {
-    [DisplayName("Từ khóa")]
-    public string Keyword { get; set; }
-
-	
 }
