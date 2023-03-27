@@ -1,5 +1,4 @@
-﻿@model TatBlog.WebApp.Areas.Admin.Models.CategoriesEditModel
-@*@model IPagedList<CategoryItem>*@
+﻿@model TatBlog.WebApp.Areas.Admin.Models.CommentEditModel
 @{
         ViewData["PageTitle"] = "Thêm/Cập nhật chủ đề";
 }
@@ -7,7 +6,7 @@
 <h1>Thêm/Cập nhật chủ đề</h1>
 
 <form asp-area="Admin"
-      asp-controller="Categories"
+      asp-controller="Comment"
       asp-action="Edit"
       enctype="multipart/form-data"
       method="post">
@@ -15,23 +14,13 @@
       <input type="hidden" asp-for="Id" />
 
       <div class="row mb-3">
-          <label asp-for="Name"
+          <label asp-for="FullName"
                  class="col-sm-2 col-form-label"></label>
            <div class="col-sm-10">
-            <input type="text" class="form-control" asp-for="Name">
-            <span asp-validation-for="Name"
+            <input type="text" class="form-control" asp-for="FullName">
+            <span asp-validation-for="FullName"
                     class="text-danger"></span>
            </div>
-      </div>
-
-      <div class="row mb-3">
-          <label asp-for="UrlSlug"
-                 class="col-sm-2 col-form-label"></label>
-          <div class="col-sm-10">
-              <input type="text" class="form-control" asp-for="UrlSlug">
-              <span asp-validation-for="UrlSlug"
-                    class="text-danger"></span>
-          </div>
       </div>
 
       <div class="row mb-3">
@@ -46,11 +35,11 @@
       </div>
 
       <div class="row mb-3">
-          <label asp-for="ShowOnMenu"
+          <label asp-for="Approved"
                  class="col-sm-2 col-form-label"></label>
             <div class="col-sm-10">
-            <input type="text" class="form-control" asp-for="ShowOnMenu">
-            <span asp-validation-for="ShowOnMenu"
+            <input type="text" class="form-control" asp-for="Approved">
+            <span asp-validation-for="Approved"
                 class="text-danger"></span>
             </div>
       </div>
@@ -62,7 +51,7 @@
         </button>
 
         <a asp-area="Admin"
-           asp-controller="Categories"
+           asp-controller="Comment"
            asp-action="Index"
            class="btn btn-danger">
             Hủy & Quay lại

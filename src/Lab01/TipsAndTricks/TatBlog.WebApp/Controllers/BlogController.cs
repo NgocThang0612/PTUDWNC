@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MapsterMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using TatBlog.Core.Constants;
+using TatBlog.Core.Entities;
 using TatBlog.Services.Blogs;
 using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
@@ -8,11 +11,13 @@ namespace TatBlog.WebApp.Controllers
     public class BlogController : Controller
     {
         private readonly IBlogRepository _blogRepository;
-
-        public BlogController(IBlogRepository blogRepository)
+        private readonly IMapper _mapper;
+        public BlogController(IBlogRepository blogRepository, IMapper mapper)
         {
             _blogRepository = blogRepository;
+            _mapper = mapper;
         }
+
 
         // Action này xử lý HTTP request đến trang chủ của
         // ứng dụng web hoặc tìm kiếm bài viết theo từ khóa
@@ -154,12 +159,34 @@ namespace TatBlog.WebApp.Controllers
 
             // Lưu lại điều kiện truy vấn để hiển thị trong View
             ViewBag.PostQuery = postQuery;
+            ViewBag.CommentsList = post.Comments;
 
             // Truyền danh sách bài viết vào View để render ra HTML
             return View(post);
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Comments(
+            Comment comment)
+        {
+            var post = await _blogRepository.GetPostByIdAsync(comment.PostId); 
+            _mapper.Map<Comment>(comment);
+            comment.JoinedDate= DateTime.Now;
+            comment.Approved = false;
+            await _blogRepository.CreateCommentAsync(comment);
+
+            return RedirectToAction("Post",
+                "Blog",
+                new
+                {
+                    area = "",
+                    year = post.PostedDate.Year,
+                    month = post.PostedDate.Month,
+                    day = post.PostedDate.Day,
+                    slug = post.UrlSlug
+                });
+        }
         public async Task<IActionResult> Archives(
             int year,
             int month,
@@ -189,6 +216,7 @@ namespace TatBlog.WebApp.Controllers
             return View(postList);
 
         }
+
 
         public IActionResult About()
             => View();

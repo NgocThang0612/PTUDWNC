@@ -35,6 +35,10 @@ public class TagsController : Controller
 
     }
 
+    private async Task PopulateTagFilterModelAsync(TagFilterModel model)
+    {
+        var tags = await _blogRepository.GetAllTagsByPostAsync();
+    }
 
     //public IActionResult Index()
     //{
@@ -63,8 +67,69 @@ public class TagsController : Controller
         //    .GetPagedPostsAsync(categoryQuery, pageNumber, pageSize);
 
         //await PopulatePostFilterModelAsync(model);
-        var model = await _blogRepository.GetPagedCategoryAsync(pageNumber, pageSize);
+        var model = await _blogRepository.GetPagedTagsAsync(pageNumber, pageSize);
         return View(model);
+    }
+    public async Task<IActionResult> DeleteTag(int id = 0)
+    {
+        await _blogRepository.DeleteTagByIdAsync(id);
+        return RedirectToAction(nameof(Index));
+    }
+    
+
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id = 0)
+    {
+        //ID = 0 <=> Thêm bài viết mới
+        //ID > 0 : Đọc dữ liệu của bài viết từ CSDL
+        var tag = id > 0
+            ? await _blogRepository.GetTagByIdAsync(id)
+            : null;
+
+        //Tạo view model từ dữ liệu của bài viết
+        var model = tag == null
+            ? new TagEditModel()
+            : _mapper.Map<TagEditModel>(tag);
+
+        //Gán các giá trị khác cho view model
+
+
+        return View(model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(
+        [FromServices] IValidator<TagEditModel> tagValidator,
+        TagEditModel model)
+    {
+        var validationResult = await tagValidator.ValidateAsync(model);
+
+        if (!validationResult.IsValid)
+        {
+            validationResult.AddToModelState(ModelState);
+        }
+
+
+        var tag = model.Id > 0
+            ? await _blogRepository.GetTagByIdAsync(model.Id)
+            : null;
+
+        if (tag == null)
+        {
+            tag = _mapper.Map<Tag>(model);
+
+            tag.Id = 0;
+        }
+        else
+        {
+            _mapper.Map(model, tag);
+
+        }
+
+        await _blogRepository.CreateOrUpdateTagAsync(
+            tag);
+
+        return RedirectToAction(nameof(Index));
     }
 }
 

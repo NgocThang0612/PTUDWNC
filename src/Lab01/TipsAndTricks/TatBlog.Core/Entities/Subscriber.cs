@@ -11,11 +11,11 @@ namespace TatBlog.Core.Entities
 
         public DateTime SubscribeDate { get; set; }
 
-        public DateTime UnsubscribeDate { get; set; }
+        public DateTime? UnsubscribeDate { get; set; }
 
         public string ResonUnsubscribe { get; set; }
 
-        public bool Voluntary { get; set; }
+        public bool? Voluntary { get; set; }
 
         public string Notes { get; set; }
     }

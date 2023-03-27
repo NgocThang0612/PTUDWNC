@@ -4,7 +4,7 @@
 @*@model TatBlog.WebApp.Areas.Admin.Models.CategoriesFilterModel;*@
 @model IPagedList<CategoryItem>
 @{
-    ViewData["PageTitle"] = "Danh sách bài viết";
+    ViewData["PageTitle"] = "Danh sách chủ đề";
     var categoriesList = Model;
     //var categoriesList = ViewBag.CategoriesList as IPagedList<Category>;
     var stateList = new List<SelectListItem>
@@ -21,7 +21,7 @@
 
 
 
-<!-- Hiển thị Form để tìm bài viết -->
+<!-- Hiển thị Form để tìm chủ đề -->
 <partial name="_CategoriesFilterPane" />
 
 @if (categoriesList != null && categoriesList.Count > 0)
@@ -32,6 +32,7 @@
                 <th>Tên chủ đề</th>
                 <th>Số bài viết</th>
                 <th>Hiển thị trên menu</th>
+                <th>Xóa chủ đề</th>
             </tr>
         </thead>
         <tbody>
@@ -90,7 +91,7 @@
 else
 {
     <h1 class="text-danger">
-        Không tìm thấy bài viết nào
+        Không tìm thấy chủ đề nào
     </h1>
 }
 

@@ -1,13 +1,12 @@
-﻿@model TatBlog.WebApp.Areas.Admin.Models.CategoriesEditModel
-@*@model IPagedList<CategoryItem>*@
+﻿@model TatBlog.WebApp.Areas.Admin.Models.AuthorEditModel
 @{
-        ViewData["PageTitle"] = "Thêm/Cập nhật chủ đề";
+        ViewData["PageTitle"] = "Thêm/Cập nhật tác giả";
 }
 
-<h1>Thêm/Cập nhật bài viết</h1>
+<h1>Thêm/Cập nhật tác giả</h1>
 
 <form asp-area="Admin"
-      asp-controller="Categories"
+      asp-controller="Authors"
       asp-action="Edit"
       enctype="multipart/form-data"
       method="post">
@@ -15,11 +14,11 @@
       <input type="hidden" asp-for="Id" />
 
       <div class="row mb-3">
-          <label asp-for="Name"
+          <label asp-for="FullName"
                  class="col-sm-2 col-form-label"></label>
            <div class="col-sm-10">
-            <input type="text" class="form-control" asp-for="Name">
-            <span asp-validation-for="Name"
+            <input type="text" class="form-control" asp-for="FullName">
+            <span asp-validation-for="FullName"
                     class="text-danger"></span>
            </div>
       </div>
@@ -34,26 +33,47 @@
           </div>
       </div>
 
-      <div class="row mb-3">
-          <label asp-for="Description"
-                 class="col-sm-2 col-form-label"></label>
-          <div class="col-sm-10">
-              <textarea class="form-control"
-                      asp-for="Description"></textarea>
-            <span asp-validation-for="Description"
-                    class="text-danger"></span>
-          </div>
-      </div>
+    <div class="row mb-3">
+        <label asp-for="Email"
+               class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" asp-for="Email">
+            <span asp-validation-for="Email"
+                  class="text-danger"></span>
+        </div>
+    </div>
 
-      <div class="row mb-3">
-          <label asp-for="ShowOnMenu"
-                 class="col-sm-2 col-form-label"></label>
+    <div class="row mb-3">
+        <label asp-for="Notes"
+               class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" asp-for="Notes">
+            <span asp-validation-for="Notes"
+                  class="text-danger"></span>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+    {
+        <div class="row mb-3">
+            <label asp-for="ImageUrl"
+               class="col-sm-2 col-form-label"></label>
             <div class="col-sm-10">
-            <input type="text" class="form-control" asp-for="ShowOnMenu">
-            <span asp-validation-for="ShowOnMenu"
-                class="text-danger"></span>
+                <img src="/@Model.ImageUrl" />
             </div>
-      </div>
+        </div>
+    }
+
+    <div class="row mb-3">
+        <label asp-for="ImageFile"
+               class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input type="file"
+                   class="form-control"
+                   asp-for="ImageFile" />
+            <span asp-validation-for="ImageFile"></span>
+        </div>
+    </div>
 
 
     <div class="text-center">
@@ -62,7 +82,7 @@
         </button>
 
         <a asp-area="Admin"
-           asp-controller="Categories"
+           asp-controller="Authors"
            asp-action="Index"
            class="btn btn-danger">
             Hủy & Quay lại

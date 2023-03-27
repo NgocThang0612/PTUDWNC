@@ -1,8 +1,12 @@
-﻿<form>
+﻿<form asp-area=""
+      asp-controller="Newsletter"
+      asp-action="Subscriber"
+      asp-route-email=""
+      method="post">
   <div class="form-row align-items-center">
     <div class="col-sm-3 my-1">
       <label class="sr-only" for="inlineFormInputName">Nhập Email</label>
-            <input type="email" class="form-control" id="inlineFormInputName" placeholder="Email" style="width: auto">
+            <input name="Email" type="email" class="form-control" id="inlineFormInputName" placeholder="Email" style="width: auto">
     </div>
     <div class="col-auto my-1">
       <button type="submit" class="btn btn-primary">Gửi</button>

@@ -26,9 +26,7 @@ public interface IAuthorRepository
             int id,
             string slug,
             CancellationToken cancellationToken = default);
-    Task AddAuthorAsync(
-        Author author,
-        CancellationToken cancellationToken = default);
+    Task<Author> AddAuthorAsync(Author author, CancellationToken cancellationToken = default);
     //Câu 2. F : Tìm danh sách N tác giả có nhiều bài viết nhất. N là tham số đầu vào.
     Task<IList<AuthorItem>> ListAuthorAsync(int N, CancellationToken cancellationToken = default);
 
@@ -46,4 +44,6 @@ public interface IAuthorRepository
             int pageNumber,
             int pageSize,
             CancellationToken cancellationToken = default);
+
+    Task<int> NumberOfAuthors(CancellationToken cancellationToken = default);
 }
