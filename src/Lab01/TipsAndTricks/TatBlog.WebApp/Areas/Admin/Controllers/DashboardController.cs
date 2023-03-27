@@ -33,8 +33,8 @@ public class DashboardController : Controller
         ViewBag.NumberOfCategories = await _blogRepository.NumberOfCategories();
         ViewBag.NumberOfAuthors = await _authorRepository.NumberOfAuthors();
         ViewBag.NumberOfComments = await _blogRepository.NumberOfComments();
-        ViewBag.NumberOfFollower = 1;
-        ViewBag.NumberOfFollowerToDay = 1;
+        ViewBag.NumberOfFollower = await _subscriberRepository.NumberOfFollowerAsync();
+        ViewBag.NumberOfFollowerToDay = await _subscriberRepository.NumberOfFollowerTodayAsync();
 
         return View();
     }

@@ -10,6 +10,11 @@ namespace TatBlog.Services.Subscribers
 {
     public interface ISubscriberRepository
     {
+        Task<int> NumberOfFollowerAsync(
+            CancellationToken cancellationToken = default);
+        Task<int> NumberOfFollowerTodayAsync(
+           CancellationToken cancellationToken = default);
+
         Task<bool> IsExistedEmail(
             string email,
             CancellationToken cancellationToken = default);

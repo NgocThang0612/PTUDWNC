@@ -110,6 +110,25 @@ namespace TatBlog.Services.Subscribers
             throw new NotImplementedException();
         }
 
+        public async Task<int> NumberOfFollowerAsync(
+            CancellationToken cancellationToken = default)
+        {
+            return await _context.Set<Subscriber>()
+                .CountAsync(cancellationToken);
+        }
+
+        public async Task<int> NumberOfFollowerTodayAsync(
+            CancellationToken cancellationToken = default)
+        {
+            string now = DateTime.Now.ToShortDateString();
+            var list = _context.Set<Subscriber>();
+            return await list
+                .CountAsync(x => x.SubscribeDate.Day == DateTime.Now.Day &&
+                    x.SubscribeDate.Month == DateTime.Now.Month &&
+                    x.SubscribeDate.Year == DateTime.Now.Year,
+                cancellationToken);
+        }
+
         public async Task<bool> IsExistedEmail(
             string email,
             CancellationToken cancellationToken = default)
