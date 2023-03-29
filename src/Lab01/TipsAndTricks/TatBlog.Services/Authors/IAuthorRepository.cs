@@ -18,9 +18,23 @@ public interface IAuthorRepository
     Task<Author> GetAuthorByUrlSlugAsync(string Slug, CancellationToken cancellationToken = default);
     //Câu 2. D : Lấy và phân trang danh sách tác giả kèm theo số lượng bài viết của tác giả
     //đó.Kết quả trả về kiểu IPagedList<AuthorItem>.
-    Task<IPagedList<AuthorItem>> GetPagedAuthorAsync(
-        IPagingParams pagingParams,
+
+    Task<IPagedList<AuthorItem>> GetPagedAuthorsAsync(
+        int pageSize = 1, int pageNumber = 5,
+        string name = null,
         CancellationToken cancellationToken = default);
+
+    Task<IPagedList<AuthorItem>> GetPagedAuthorsAsync(
+        IPagingParams pagingParams,
+        string name = null,
+        CancellationToken cancellationToken = default);
+
+    Task<IPagedList<T>> GetPagedAuthorsAsync<T>(
+         Func<IQueryable<Author>, IQueryable<T>> mapper,
+         IPagingParams pagingParams,
+         string name = null,
+         CancellationToken cancellationToken = default);
+
     //Câu 2. E : Thêm hoặc cập nhật thông tin một tác giả.
     Task<bool> IsAuthorSlugExistedAsync(
             int id,
@@ -34,16 +48,21 @@ public interface IAuthorRepository
     Task<IList<AuthorItem>> GetAuthorsAsync(
         CancellationToken cancellationToken = default);
 
-
-
     Task<bool> DeleteAuthorByIdAsync(
             int id,
             CancellationToken cancellationToken = default);
 
-    Task<IPagedList<AuthorItem>> GetPagedAuthorsAsync(
-            int pageNumber,
-            int pageSize,
-            CancellationToken cancellationToken = default);
-
     Task<int> NumberOfAuthors(CancellationToken cancellationToken = default);
+
+    Task<Author> GetCachedAuthorByIdAsync(int authorId);
+
+    Task<bool> AddOrUpdateAsync(
+        Author author, CancellationToken cancellationToken = default);
+
+    Task<bool> SetImageUrlAsync(
+        int authorId, string imageUrl,
+        CancellationToken cancellationToken = default);
+
+    Task<bool> DeleteAuthorAsync(
+        int authorId, CancellationToken cancellationToken = default);
 }
