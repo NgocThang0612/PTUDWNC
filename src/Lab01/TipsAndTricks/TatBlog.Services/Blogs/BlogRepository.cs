@@ -467,6 +467,17 @@ public class BlogRepository : IBlogRepository
 
     //Câu 1 . S : Tìm và phân trang các bài viết thỏa mãn điều kiện tìm kiếm được cho trong
     //đối tượng PostQuery(kết quả trả về kiểu IPagedList<Post>)
+    public async Task<IPagedList<T>> GetPagedPostsAsync<T>(
+        PostQuery condition,
+        IPagingParams pagingParams,
+        Func<IQueryable<Post>, IQueryable<T>> mapper)
+    {
+        var posts = FilterPost(condition);
+        var projectedPosts = mapper(posts);
+
+        return await projectedPosts.ToPagedListAsync(pagingParams);
+    }
+
     public async Task<IPagedList<Post>> GetPagedPostsAsync(PostQuery pq, IPagingParams pagingParams, CancellationToken cancellationToken = default)
     {
         return await FilterPost(pq)
@@ -507,10 +518,7 @@ public class BlogRepository : IBlogRepository
                 cancellationToken);
     }
 
-    public Task GetAuthorsAsync()
-    {
-        throw new NotImplementedException();
-    }
+    
     //Câu 1. T : Tương tự câu trên nhưng yêu cầu trả về kiểu IPagedList<T>. Trong đó T
     //là kiểu dữ liệu của đối tượng mới được tạo từ đối tượng Post.Hàm này có
     //thêm một đầu vào là Func<IQueryable<Post>, IQueryable<T>> mapper

@@ -156,6 +156,11 @@ public interface IBlogRepository
 
     //Câu 1 . S : Tìm và phân trang các bài viết thỏa mãn điều kiện tìm kiếm được cho trong
     //đối tượng PostQuery(kết quả trả về kiểu IPagedList<Post>)
+    Task<IPagedList<T>> GetPagedPostsAsync<T>(
+        PostQuery condition,
+        IPagingParams pagingParams,
+        Func<IQueryable<Post>, IQueryable<T>> mapper);
+
     IQueryable<Post> FilterPost(PostQuery pq);
     Task<IPagedList<Post>> GetPagedPostsAsync(
             PostQuery pq,
