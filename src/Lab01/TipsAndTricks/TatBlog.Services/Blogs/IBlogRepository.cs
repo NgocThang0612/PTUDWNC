@@ -34,6 +34,8 @@ public interface IBlogRepository
     Task<bool> IsPostSlugExistedAsync(
         int postId, string slug,
         CancellationToken cancellationToken = default);
+    Task<bool> AddOrUpdatePostAsync(
+        Post post, CancellationToken cancellationToken = default);
 
     //// Lấy danh sách chuyên mục và số lượng bài viết
     //// nằm thuộc từng chuyên mục/chủ đề
@@ -98,13 +100,16 @@ public interface IBlogRepository
         CancellationToken cancellationToken = default);
 
     //Câu 1.J : Lấy và phân trang danh sách chuyên mục, kết quả trả về kiểu IPagedList<CategoryItem>
+    
     Task<IPagedList<CategoryItem>> GetPagedCategoryAsync(
             
             int pageNumber = 1,
             int pageSize = 10,
+            string name = null,
             CancellationToken cancellationToken = default);
     Task<IPagedList<CategoryItem>> GetPagedCategoryAsync(
         IPagingParams pagingParams,
+        string name = null,
         CancellationToken cancellationToken = default);
 
     Task<IPagedList<Comment>> GetPagedCommentAsync(
@@ -114,6 +119,13 @@ public interface IBlogRepository
             CancellationToken cancellationToken = default);
     Task<IPagedList<Comment>> GetPagedCommentAsync(
         IPagingParams pagingParams,
+        string name = null,
+        CancellationToken cancellationToken = default);
+
+    Task<Comment> GetCachedCommentByIdAsync(int commentId);
+
+    Task<bool> IsCommentSlugExistedAsync(
+        int commentId, string tagSlug,
         CancellationToken cancellationToken = default);
 
     //Câu 1.K : Đếm số lượng bài viết trong N tháng gần nhất. N là tham số đầu vào. Kết
@@ -156,6 +168,11 @@ public interface IBlogRepository
 
     //Câu 1 . S : Tìm và phân trang các bài viết thỏa mãn điều kiện tìm kiếm được cho trong
     //đối tượng PostQuery(kết quả trả về kiểu IPagedList<Post>)
+    Task<IPagedList<T>> GetPagedPostQueryAsync<T>(
+            PostQuery pq,
+            IPagingParams pagingParams,
+            Func<IQueryable<Post>, IQueryable<T>> mapper,
+            CancellationToken cancellationToken = default);
     Task<IPagedList<T>> GetPagedPostsAsync<T>(
         PostQuery condition,
         IPagingParams pagingParams,
@@ -216,9 +233,41 @@ public interface IBlogRepository
 
     Task<int> NumberOfCategories(CancellationToken cancellationToken = default);
 
-    
+    Task<Category> GetCachedCategoryByIdAsync(int categoryId);
 
     Task<int> NumberOfComments(CancellationToken cancellationToken = default);
+
+    Task<bool> IsCategorySlugExistedAsync(
+        int categoryId, string categorySlug,
+        CancellationToken cancellationToken = default);
+    Task<bool> AddOrUpdateAsync(
+        Category category, CancellationToken cancellationToken = default);
+
+    Task<Post> GetCachedPostByIdAsync(int postId);
+
+    Task<Post> GetPostBySlugAsync(
+        string slug,
+        CancellationToken cancellationToken = default);
+
+    Task<bool> SetImageUrlAsync(
+        int postId, string imageUrl,
+        CancellationToken cancellationToken = default);
+
+    Task<IPagedList<TagItem>> GetPagedTagAsync(
+        IPagingParams pagingParams,
+        string name = null,
+        CancellationToken cancellationToken = default);
+
+    Task<Tag> GetCachedTagByIdAsync(int tagId);
+
+    Task<bool> IsTagSlugExistedAsync(
+        int tagId, string tagSlug,
+        CancellationToken cancellationToken = default);
+
+    Task<bool> AddOrUpdateTagAsync(
+       Tag tag, CancellationToken cancellationToken = default);
+
+    Task<bool> DeleteTagsByIdAsync(int id, CancellationToken cancellationToken = default);
     #endregion
     #region
 

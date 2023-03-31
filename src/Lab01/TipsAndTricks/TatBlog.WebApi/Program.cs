@@ -24,6 +24,21 @@ var app = builder.Build();
     // Configure API endpoints
     app.MapAuthorEndpoints();
 
+    // Configure API endpoints
+    app.MapCategoryEndpoints();
+
+    // Configure API endpoints
+    app.MapTagEndpoints();
+
+    // Configure API endpoints
+    app.MapDashboardEndpoints();
+
+    //// Configure API endpoints
+    //app.MapCommentEndpoints();
+
+    // Configure API endpoints
+    app.MapPostEndpoints();
+
     app.Run();
 }
 

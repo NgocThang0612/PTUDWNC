@@ -1,5 +1,4 @@
-﻿
-using FluentValidation.Results;
+﻿using FluentValidation.Results;
 using System.Net;
 
 namespace TatBlog.WebApi.Models;

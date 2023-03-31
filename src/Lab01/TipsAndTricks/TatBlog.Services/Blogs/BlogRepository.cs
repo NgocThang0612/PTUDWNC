@@ -14,16 +14,20 @@ using TatBlog.Services.Extensions;
 using TatBlog.Core.Constants;
 using System.Threading;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace TatBlog.Services.Blogs;
 
 public class BlogRepository : IBlogRepository
 {
     private readonly BlogDBContext _context;
+    private readonly IMemoryCache _memoryCache;
 
-    public BlogRepository(BlogDBContext context)
+    public BlogRepository(BlogDBContext context, IMemoryCache memoryCache)
     {
         _context = context;
+        _memoryCache = memoryCache;
+
     }
 
     #region
@@ -84,6 +88,22 @@ public class BlogRepository : IBlogRepository
             .AnyAsync(x => x.Id != postId && x.UrlSlug == slug,
             cancellationToken);
     }
+    public async Task<bool> AddOrUpdatePostAsync(
+        Post post, CancellationToken cancellationToken = default)
+    {
+        if (post.Id > 0)
+        {
+            _context.Posts.Update(post);
+            _memoryCache.Remove($"post.by-id.{post.Id}");
+        }
+        else
+        {
+            _context.Posts.Add(post);
+        }
+
+        return await _context.SaveChangesAsync(cancellationToken) > 0;
+    }
+    
 
     //// Lấy danh sách chuyên mục và số lượng bài viết
     //// nằm thuộc từng chuyên mục/chủ đề
@@ -190,6 +210,8 @@ public class BlogRepository : IBlogRepository
            .FirstOrDefaultAsync(cancellationToken);
     }
 
+    
+
     //Câu 1.G : Thêm hoặc cập nhật một chuyên mục/chủ đề
     public async Task AddCategoryAsync(Category category, CancellationToken cancellationToken = default)
     {
@@ -226,6 +248,18 @@ public class BlogRepository : IBlogRepository
         if (category is null) return false;
 
         _context.Set<Category>().Remove(category);
+        var rowsCount = await _context.SaveChangesAsync(cancellationToken);
+
+        return rowsCount > 0;
+    }
+
+    public async Task<bool> DeleteTagsByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var tag = await _context.Set<Tag>().FindAsync(id);
+
+        if (tag is null) return false;
+
+        _context.Set<Tag>().Remove(tag);
         var rowsCount = await _context.SaveChangesAsync(cancellationToken);
 
         return rowsCount > 0;
@@ -278,9 +312,11 @@ public class BlogRepository : IBlogRepository
     }
 
     //Câu 1.J : Lấy và phân trang danh sách chuyên mục, kết quả trả về kiểu IPagedList<CategoryItem>
+    
     public async Task<IPagedList<CategoryItem>> GetPagedCategoryAsync(
             int pageNumber = 1,
             int pageSize = 10,
+            string name = null,
             CancellationToken cancellationToken = default)
     {
         var categoryQuery = _context.Set<Category>()
@@ -301,6 +337,7 @@ public class BlogRepository : IBlogRepository
     }
     public async Task<IPagedList<CategoryItem>> GetPagedCategoryAsync(
         IPagingParams pagingParams,
+        string name = null,
         CancellationToken cancellationToken = default)
     {
         var categoryQuery = _context.Set<Category>()
@@ -332,6 +369,7 @@ public class BlogRepository : IBlogRepository
     }
     public async Task<IPagedList<Comment>> GetPagedCommentAsync(
         IPagingParams pagingParams,
+        string name = null,
         CancellationToken cancellationToken = default)
     {
         var commentQuery = _context.Set<Comment>();
@@ -467,6 +505,18 @@ public class BlogRepository : IBlogRepository
 
     //Câu 1 . S : Tìm và phân trang các bài viết thỏa mãn điều kiện tìm kiếm được cho trong
     //đối tượng PostQuery(kết quả trả về kiểu IPagedList<Post>)
+    public async Task<IPagedList<T>> GetPagedPostQueryAsync<T>(
+            PostQuery pq,
+            IPagingParams pagingParams,
+            Func<IQueryable<Post>, IQueryable<T>> mapper,
+            CancellationToken cancellationToken = default)
+    {
+        var posts = FilterPost(pq);
+        var mapperPosts = mapper(posts);
+        return await mapperPosts
+            .ToPagedListAsync(pagingParams, cancellationToken);
+    }
+
     public async Task<IPagedList<T>> GetPagedPostsAsync<T>(
         PostQuery condition,
         IPagingParams pagingParams,
@@ -478,7 +528,10 @@ public class BlogRepository : IBlogRepository
         return await projectedPosts.ToPagedListAsync(pagingParams);
     }
 
-    public async Task<IPagedList<Post>> GetPagedPostsAsync(PostQuery pq, IPagingParams pagingParams, CancellationToken cancellationToken = default)
+    public async Task<IPagedList<Post>> GetPagedPostsAsync(
+        PostQuery pq,
+        IPagingParams pagingParams,
+        CancellationToken cancellationToken = default)
     {
         return await FilterPost(pq)
                 .ToPagedListAsync(pagingParams, cancellationToken);
@@ -689,7 +742,147 @@ public class BlogRepository : IBlogRepository
             .CountAsync(cancellationToken);
     }
 
-    
+    public async Task<Category> GetCachedCategoryByIdAsync(int categoryId)
+    {
+        return await _memoryCache.GetOrCreateAsync(
+            $"category.by-id.{categoryId}",
+            async (entry) =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+                return await GetCategoryByIdAsync(categoryId);
+            });
+    }
+
+    public async Task<Tag> GetCachedTagByIdAsync(int tagId)
+    {
+        return await _memoryCache.GetOrCreateAsync(
+            $"tag.by-id.{tagId}",
+            async (entry) =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+                return await GetTagByIdAsync(tagId);
+            });
+    }
+
+    public async Task<Comment> GetCachedCommentByIdAsync(int commentId)
+    {
+        return await _memoryCache.GetOrCreateAsync(
+            $"comment.by-id.{commentId}",
+            async (entry) =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+                return await GetCommentByIdAsync(commentId);
+            });
+    }
+
+    public async Task<bool> IsCategorySlugExistedAsync(
+        int categoryId, string categorySlug,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<Category>()
+            .AnyAsync(x => x.Id != categoryId && x.UrlSlug == categorySlug, cancellationToken);
+    }
+
+    public async Task<bool> IsTagSlugExistedAsync(
+        int tagId, string tagSlug,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<Tag>()
+            .AnyAsync(x => x.Id != tagId && x.UrlSlug == tagSlug, cancellationToken);
+    }
+
+    public async Task<bool> IsCommentSlugExistedAsync(
+        int commentId, string tagSlug,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<Comment>()
+            .AnyAsync(x => x.Id != commentId && x.UrlSlug == tagSlug, cancellationToken);
+    }
+
+    public async Task<bool> AddOrUpdateAsync(
+        Category category, CancellationToken cancellationToken = default)
+    {
+        if (category.Id > 0)
+        {
+            _context.Categories.Update(category);
+            _memoryCache.Remove($"category.by-id.{category.Id}");
+        }
+        else
+        {
+            _context.Categories.Add(category);
+        }
+
+        return await _context.SaveChangesAsync(cancellationToken) > 0;
+    }
+
+    public async Task<bool> AddOrUpdateTagAsync(
+        Tag tag, CancellationToken cancellationToken = default)
+    {
+        if (tag.Id > 0)
+        {
+            _context.Tags.Update(tag);
+            _memoryCache.Remove($"tag.by-id.{tag.Id}");
+        }
+        else
+        {
+            _context.Tags.Add(tag);
+        }
+
+        return await _context.SaveChangesAsync(cancellationToken) > 0;
+    }
+
+    public async Task<Post> GetCachedPostByIdAsync(int postId)
+    {
+        return await _memoryCache.GetOrCreateAsync(
+            $"post.by-id.{postId}",
+            async (entry) =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+                return await GetPostByIdAsync(postId);
+            });
+    }
+
+    public async Task<Post> GetPostBySlugAsync(
+        string slug,
+        CancellationToken cancellationToken = default)
+    {
+        var postQuery = new PostQuery()
+        {
+            PublishedOnly = true,
+            TitleSlug = slug
+        };
+
+        return await FilterPost(postQuery).FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<bool> SetImageUrlAsync(
+        int postId, string imageUrl,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Posts
+            .Where(x => x.Id == postId)
+            .ExecuteUpdateAsync(x =>
+                x.SetProperty(a => a.ImageUrl, a => imageUrl),
+                cancellationToken) > 0;
+    }
+
+    public async Task<IPagedList<TagItem>> GetPagedTagAsync(
+        IPagingParams pagingParams,
+        string name = null,
+        CancellationToken cancellationToken = default)
+    {
+        var tagQuery = _context.Set<Tag>()
+            .Select(x => new TagItem()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                UrlSlug = x.UrlSlug,
+                Description = x.Description,
+                PostCount = x.Posts.Count(p => p.Published)
+            });
+        return await tagQuery
+            .ToPagedListAsync(pagingParams, cancellationToken);
+    }
 
     #endregion
 
