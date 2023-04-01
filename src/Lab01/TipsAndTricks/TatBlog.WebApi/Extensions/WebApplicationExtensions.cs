@@ -4,6 +4,7 @@ using TatBlog.Data.Contexts;
 using TatBlog.Services.Authors;
 using TatBlog.Services.Blogs;
 using TatBlog.Services.Media;
+using TatBlog.Services.Subscribers;
 using TatBlog.Services.Timing;
 
 namespace TatBlog.WebApi.Extensions
@@ -24,6 +25,7 @@ namespace TatBlog.WebApi.Extensions
             builder.Services.AddScoped<IMediaManager, LocalFileSystemMediaManager>();
             builder.Services.AddScoped<IBlogRepository, BlogRepository>();
             builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+            builder.Services.AddScoped<ISubscriberRepository, SubscriberRepository>();
 
             return builder;
         }

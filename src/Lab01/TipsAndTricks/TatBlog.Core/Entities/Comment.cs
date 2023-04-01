@@ -20,6 +20,7 @@ public class Comment : IEntity
 
     // Ghi chú 
     public string Description { get; set; }
+    public string UrlSlug { get; set; }
 
     public bool Approved { get; set; }
 

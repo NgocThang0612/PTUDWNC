@@ -28,6 +28,6 @@ public class PostQuery
     public DateTime PostedDate { get; set; }
     public string PostSlug { get; set; }
     public string TitleSlug { get; set; }
-    
+    public string CommentPost { get; set; }
 
 }
