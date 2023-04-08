@@ -33,6 +33,10 @@ public static class TagEndpoints
             .Produces<ApiResponse<TagItem>>();
         //.Produces(404);
 
+        routeGroupBuilder.MapGet("/tagcloud", GetTagCloud)
+            .WithName("GetTagCloud")
+            .Produces<ApiResponse<IList<TagItem>>>();
+
         routeGroupBuilder.MapGet(
             "/{slug:regex(^[a-z0-9_-]+$)}/posts",
             GetPostsByTagSlug)
@@ -78,6 +82,17 @@ public static class TagEndpoints
             new PaginationResult<TagItem>(tagsList);
 
         return Results.Ok(ApiResponse.Success(paginationResult));
+    }
+
+    private static async Task<IResult> GetTagCloud(
+        IBlogRepository blogRepository,
+        IMapper mapper)
+    {
+        var tag = await blogRepository.GetAllTagsByPostAsync();
+        return tag == null
+            ? Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound,
+                $"Không tìm thấy thẻ"))
+            : Results.Ok(ApiResponse.Success(mapper.Map<IList<TagItem>>(tag)));
     }
 
     private static async Task<IResult> GetTagDetails(

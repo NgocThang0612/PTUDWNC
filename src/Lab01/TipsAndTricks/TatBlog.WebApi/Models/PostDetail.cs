@@ -40,4 +40,6 @@ public class PostDetail
 
     // Danh sách các từ khóa của bài viết
     public IList<TagDto> Tags { get; set; }
+
+    public bool Published { get; set; }
 }
