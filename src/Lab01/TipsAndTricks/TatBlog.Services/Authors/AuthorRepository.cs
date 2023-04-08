@@ -15,7 +15,7 @@ namespace TatBlog.Services.Authors;
 
 public class AuthorRepository : IAuthorRepository
 {
-    private readonly BlogDBContext _context;
+    private readonly BlogDBContext _context;    
     private readonly IMemoryCache _memoryCache;
 
     public AuthorRepository(BlogDBContext context, IMemoryCache memoryCache)

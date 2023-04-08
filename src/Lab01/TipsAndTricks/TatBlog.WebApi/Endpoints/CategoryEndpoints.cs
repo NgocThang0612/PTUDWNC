@@ -68,17 +68,24 @@ public static class CategoryEndpoints
     }
 
     private static async Task<IResult> GetCategories(
-        [AsParameters] CategoryFilterModel model,
         IBlogRepository blogRepository)
     {
-        var categoriesList = await blogRepository
-            .GetPagedCategoryAsync(model, model.Name);
-
-        var paginationResult =
-            new PaginationResult<CategoryItem>(categoriesList);
-
-        return Results.Ok(ApiResponse.Success(paginationResult));
+        var categories = await blogRepository.GetCategoriesAsync();
+        return Results.Ok(ApiResponse.Success(categories));
     }
+
+    //private static async Task<IResult> GetCategories(
+    //    [AsParameters] CategoryFilterModel model,
+    //    IBlogRepository blogRepository)
+    //{
+    //    var categoriesList = await blogRepository
+    //        .GetPagedCategoryAsync(model, model.Name);
+
+    //    var paginationResult =
+    //        new PaginationResult<CategoryItem>(categoriesList);
+
+    //    return Results.Ok(ApiResponse.Success(paginationResult));
+    //}
 
     private static async Task<IResult> GetCategoryDetails(
         int id,
