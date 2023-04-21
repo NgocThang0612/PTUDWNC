@@ -1,20 +1,25 @@
 import axios from 'axios';
+import { get_api } from './Methods';
 
-export async function getCategories(pageSize = 10, pageNumber = 1 ) {
-    try {
-        const response = await
-axios.get(`https://localhost:7227/api/categories`);
-        const data = response.data;
-        if (data.isSuccess) {
-            return data.result;
-        }
-        else
-            return null;
-    } catch (error) {
-        console.log('Error', error.message);
-      return null;
-    }
+export function getCategories() {
+    return get_api(`https://localhost:3000/api/categories`);
 }
+
+// export async function getCategories(pageSize = 10, pageNumber = 1 ) {
+//     try {
+//         const response = await
+// axios.get(`https://localhost:7227/api/categories`);
+//         const data = response.data;
+//         if (data.isSuccess) {
+//             return data.result;
+//         }
+//         else
+//             return null;
+//     } catch (error) {
+//         console.log('Error', error.message);
+//       return null;
+//     }
+// }
 
 export async function getFeaturedPosts(pageSize = 10, pageNumber = 1 ) {
     try {
