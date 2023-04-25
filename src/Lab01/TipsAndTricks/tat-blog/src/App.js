@@ -14,12 +14,14 @@ import Categories from './Pages/Admin/Categories';
 import Comments from './Pages/Admin/Comments';
 import Posts from './Pages/Admin/Post/Posts';
 import Tags from './Pages/Admin/Tags';
+import Dashboard from './Pages/Admin/Dashboard';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
 } from 'react-router-dom';
 import Edit from './Pages/Admin/Post/Edit';
+import NotFound from './Pages/NotFound';
 
 function App() {
   return (
@@ -57,7 +59,7 @@ function App() {
           <Route path='blog/Rss' element={<Rss />} />
         </Route>
         <Route path='/admin' element={<AdminLayout />}>
-          <Route path='/admin' element={<AdminIndex.default />} />
+          <Route path='/admin' element={<Dashboard />} />
           <Route path='/admin/authors' element={<Authors />} />
           <Route path='/admin/categories' element={<Categories />} />
           <Route path='/admin/comments' element={<Comments />} />

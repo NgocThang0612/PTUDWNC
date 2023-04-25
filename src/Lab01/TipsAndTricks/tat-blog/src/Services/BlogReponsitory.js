@@ -1,19 +1,20 @@
 import axios from 'axios';
 import { get_api, post_api } from './Methods';
 
-export async function getPosts( pageSize = 10, pageNumber = 1, sortColumn = '', sortOrder = '') {
+export async function getPosts(keyword= '',pageSize = 10, pageNumber = 1,
+    sortColumn = '', sortOrder = '') {
     try {
         const response = await
-axios.get(`https://localhost:7227/api/posts/get-post-filter?PageSize=${pageSize}&PageNumber=${pageNumber}&SortColumn=${sortColumn}
-&SortOrder=${sortOrder}`);
+            axios.get(`https://localhost:7227/api/posts/get-post-filter?PageSize=${pageSize}&PageNumber=${pageNumber}`);
+
         const data = response.data;
         if (data.isSuccess)
             return data.result;
         else
             return null;
-    } catch (error) {
+        } catch (error) {
         console.log('Error', error.message);
-      return null;
+        return null;
     }
 }
 
@@ -51,6 +52,26 @@ export function getPostsFilter(keyword = '', authorId = '', categoryId = '',
     url.searchParams.append('PageSize', pageSize);
     url.searchParams.append('PageNumber', pageNumber);
     return get_api(url.href);
+}
+
+export function getAuthor() {
+    return get_api('https://localhost:7227/api/authors');
+}
+
+export function getCategories() {
+    return get_api('https://localhost:7227/api/categories');
+}
+
+export function getTags() {
+    return get_api('https://localhost:7227/api/tags');
+}
+
+export function getComments() {
+    return get_api('');
+}
+
+export function getDashboard() {
+    return get_api('https://localhost:7227/api/dashboards');
 }
 
 export async function getPostById(id = 0) {

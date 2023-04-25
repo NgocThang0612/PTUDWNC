@@ -23,8 +23,6 @@ const Posts = () => {
             postFilter?.year,
             postFilter?.month,
             ps, p).then(data => {
-                console.log("data:")
-                console.log(data)
                 if (data)
                     setPostsList(data.items);
                 else
