@@ -2,7 +2,7 @@ import axios from 'axios';
 import { get_api } from './Methods';
 
 export function getCategories() {
-    return get_api(`https://localhost:3000/api/categories`);
+    return get_api(`https://localhost:7227/api/categories`);
 }
 
 // export async function getCategories(pageSize = 10, pageNumber = 1 ) {

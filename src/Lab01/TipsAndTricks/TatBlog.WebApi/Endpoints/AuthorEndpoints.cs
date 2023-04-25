@@ -80,16 +80,11 @@ public static class AuthorEndpoints
     }
 
     private static async Task<IResult> GetAuthors(
-        [AsParameters] AuthorFilterModel model,
         IAuthorRepository authorRepository)
     {
-        var authorsList = await authorRepository
-            .GetPagedAuthorsAsync(model, model.Name);
-
-        var paginationResult =
-            new PaginationResult<AuthorItem>(authorsList);
-
-        return Results.Ok(ApiResponse.Success(paginationResult));
+            var authors = await authorRepository.GetAuthorsAsync();
+            return Results.Ok(ApiResponse.Success(authors));
+        
     }
 
     private static async Task<IResult> GetAuthorDetails(

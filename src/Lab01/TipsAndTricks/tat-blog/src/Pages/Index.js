@@ -15,8 +15,8 @@ const Index = () => {
 
     let query = useQuery(),
         k = query.get('k') ?? '',
-        p = query.get('p') ?? 1,
-        ps = query.get('ps') ?? 10;
+        ps = query.get('ps') ?? 10,
+        p = query.get('p') ?? 1;
 
     useEffect(() => {
         document.title = 'Trang chủ';
@@ -29,7 +29,7 @@ const Index = () => {
             else
                 setPostList([]);
         })
-    }, [k, p, ps]);
+    }, [k, ps, p]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -37,19 +37,22 @@ const Index = () => {
 
     if (postList.length > 0)
     return (
-        <div className='p-4'>
-            {postList.map((item, index) => {
-                return (
-                    <PostItem postItem={item} key={index} />
-                );
-            })}
-            <Pager postquery={{ 'keyword': k }} metadata={metadata} />
-        </div>
+        <div className="p-4">
+        {postList.map((item, index) => {
+            return (
+                <PostItem postItem={item} key={index} />
+            );
+        })}
+        <Pager postquery={{ 'keyword': k }} metadata={metadata} />
+    </div>
     );
     else return (
+        
         <h1>
             Đây là trang chủ
         </h1>
+        
+        
     );
 }
 export default Index;

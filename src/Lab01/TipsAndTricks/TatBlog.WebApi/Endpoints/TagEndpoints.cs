@@ -72,16 +72,10 @@ public static class TagEndpoints
     }
 
     private static async Task<IResult> GetTags(
-        [AsParameters] TagFilterModel model,
         IBlogRepository blogRepository)
     {
-        var tagsList = await blogRepository
-            .GetPagedTagAsync(model, model.Name);
-
-        var paginationResult =
-            new PaginationResult<TagItem>(tagsList);
-
-        return Results.Ok(ApiResponse.Success(paginationResult));
+        var categories = await blogRepository.GetAllTagsByPostAsync();
+        return Results.Ok(ApiResponse.Success(categories));
     }
 
     private static async Task<IResult> GetTagCloud(

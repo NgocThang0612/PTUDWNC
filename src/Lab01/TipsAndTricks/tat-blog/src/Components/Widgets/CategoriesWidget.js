@@ -8,6 +8,8 @@ const CategoriesWidget = () => {
 
     useEffect(() => {
         getCategories().then(data => {
+            console.log("data")
+            console.log(data)
             if (data)
                 setCategoryList(data);
             else
